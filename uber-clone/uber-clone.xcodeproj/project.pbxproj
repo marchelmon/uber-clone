@@ -9,21 +9,21 @@
 /* Begin PBXBuildFile section */
 		3CB20D2A2643F77C006D869A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB20D292643F77C006D869A /* AppDelegate.swift */; };
 		3CB20D2C2643F77C006D869A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB20D2B2643F77C006D869A /* SceneDelegate.swift */; };
-		3CB20D2E2643F77C006D869A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB20D2D2643F77C006D869A /* ViewController.swift */; };
 		3CB20D312643F77C006D869A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3CB20D2F2643F77C006D869A /* Main.storyboard */; };
 		3CB20D332643F780006D869A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3CB20D322643F780006D869A /* Assets.xcassets */; };
 		3CB20D362643F780006D869A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3CB20D342643F780006D869A /* LaunchScreen.storyboard */; };
+		3CB20D452643F8F8006D869A /* LoginController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB20D442643F8F8006D869A /* LoginController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		3CB20D262643F77C006D869A /* uber-clone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "uber-clone.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CB20D292643F77C006D869A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3CB20D2B2643F77C006D869A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		3CB20D2D2643F77C006D869A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		3CB20D302643F77C006D869A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		3CB20D322643F780006D869A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3CB20D352643F780006D869A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3CB20D372643F780006D869A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3CB20D442643F8F8006D869A /* LoginController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,15 +56,55 @@
 		3CB20D282643F77C006D869A /* uber-clone */ = {
 			isa = PBXGroup;
 			children = (
+				3CB20D422643F84F006D869A /* Model */,
+				3CB20D412643F84E006D869A /* View */,
+				3CB20D402643F84C006D869A /* Controller */,
+				3CB20D3E2643F842006D869A /* Service */,
+				3CB20D3F2643F84A006D869A /* Utils */,
 				3CB20D292643F77C006D869A /* AppDelegate.swift */,
 				3CB20D2B2643F77C006D869A /* SceneDelegate.swift */,
-				3CB20D2D2643F77C006D869A /* ViewController.swift */,
 				3CB20D2F2643F77C006D869A /* Main.storyboard */,
 				3CB20D322643F780006D869A /* Assets.xcassets */,
 				3CB20D342643F780006D869A /* LaunchScreen.storyboard */,
 				3CB20D372643F780006D869A /* Info.plist */,
 			);
 			path = "uber-clone";
+			sourceTree = "<group>";
+		};
+		3CB20D3E2643F842006D869A /* Service */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Service;
+			sourceTree = "<group>";
+		};
+		3CB20D3F2643F84A006D869A /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		3CB20D402643F84C006D869A /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				3CB20D442643F8F8006D869A /* LoginController.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		3CB20D412643F84E006D869A /* View */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		3CB20D422643F84F006D869A /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -137,8 +177,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3CB20D2E2643F77C006D869A /* ViewController.swift in Sources */,
 				3CB20D2A2643F77C006D869A /* AppDelegate.swift in Sources */,
+				3CB20D452643F8F8006D869A /* LoginController.swift in Sources */,
 				3CB20D2C2643F77C006D869A /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
