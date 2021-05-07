@@ -14,6 +14,7 @@
 		3CB20D362643F780006D869A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3CB20D342643F780006D869A /* LaunchScreen.storyboard */; };
 		3CB20D452643F8F8006D869A /* LoginController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB20D442643F8F8006D869A /* LoginController.swift */; };
 		3CB20D482644591D006D869A /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB20D472644591C006D869A /* Extensions.swift */; };
+		3CB20D4F2645503A006D869A /* RegistrationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB20D4E2645503A006D869A /* RegistrationController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		3CB20D372643F780006D869A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3CB20D442643F8F8006D869A /* LoginController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginController.swift; sourceTree = "<group>"; };
 		3CB20D472644591C006D869A /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		3CB20D4E2645503A006D869A /* RegistrationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,6 +94,7 @@
 			isa = PBXGroup;
 			children = (
 				3CB20D442643F8F8006D869A /* LoginController.swift */,
+				3CB20D4E2645503A006D869A /* RegistrationController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -183,6 +186,7 @@
 				3CB20D2A2643F77C006D869A /* AppDelegate.swift in Sources */,
 				3CB20D452643F8F8006D869A /* LoginController.swift in Sources */,
 				3CB20D2C2643F77C006D869A /* SceneDelegate.swift in Sources */,
+				3CB20D4F2645503A006D869A /* RegistrationController.swift in Sources */,
 				3CB20D482644591D006D869A /* Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -58,6 +58,7 @@ extension UIView {
     
     func inputContainerView(image: UIImage, textField: UITextField) -> UIView {
         let view = UIView()
+        view.heightAnchor.constraint(equalToConstant: 50).isActive = true
         
         let imageView = UIImageView()
         imageView.image = image
@@ -80,7 +81,6 @@ extension UIView {
     
 }
 
-
 extension UITextField {
     
     func textField(placeholder: String, isSecureText: Bool = false) -> UITextField {
@@ -95,5 +95,16 @@ extension UITextField {
     
         return tf
     }
+    
+}
+
+extension UIColor {
+    
+    static func rgb(red: CGFloat, green: CGFloat, blue: CGFloat) -> UIColor {
+        return UIColor.init(red: red/255, green: green/255, blue: blue/255, alpha: 1.0)
+    }
+    
+    static let backgroundColor = UIColor.rgb(red: 25, green: 25, blue: 25)
+    static let mainBlueInt = UIColor.rgb(red: 17, green: 154, blue: 237)
     
 }
