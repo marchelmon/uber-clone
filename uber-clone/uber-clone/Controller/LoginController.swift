@@ -25,18 +25,14 @@ class LoginController: UIViewController {
     private lazy var emailContainerView = UIView().inputContainerView(image: #imageLiteral(resourceName: "ic_mail_outline_white_2x"), textField: emailTextField)
     private lazy var passwordContainerView = UIView().inputContainerView(image: #imageLiteral(resourceName: "ic_lock_outline_white_2x"), textField: passwordTextField)
     
-    private let loginButton: UIButton = {
-        let button = UIButton(type: .system)
+    private let loginButton: AuthButton = {
+        let button = AuthButton(type: .system)
         button.setTitle("Login", for: .normal)
-        button.setTitleColor(UIColor(white: 1, alpha: 0.5), for: .normal)
-        button.backgroundColor = UIColor.mainBlueInt
-        button.layer.cornerRadius = 5
-        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20 )
-        button.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20)
         return button
     }()
     
-    private let signUpButton: UIButton = {
+    private let goToRegisterButton: UIButton = {
         let button = UIButton(type: .system)
         let attributedTitle = NSMutableAttributedString(
             string: "Don't have an account",
@@ -69,7 +65,6 @@ class LoginController: UIViewController {
         
         navigationController?.pushViewController(controller, animated: true)
         
-        
     }
     
     //MARK: - Helpers
@@ -90,9 +85,9 @@ class LoginController: UIViewController {
         view.addSubview(stack)
         stack.anchor(top: titleLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, paddingTop: 40, paddingLeft: 16, paddingRight: 16)
         
-        view.addSubview(signUpButton)
-        signUpButton.centerX(inView: view)
-        signUpButton.anchor(bottom: view.safeAreaLayoutGuide.bottomAnchor, height: 32)
+        view.addSubview(goToRegisterButton)
+        goToRegisterButton.centerX(inView: view)
+        goToRegisterButton.anchor(bottom: view.safeAreaLayoutGuide.bottomAnchor, height: 32)
         
     }
     
