@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Firebase
 
 class RegistrationController: UIViewController {
     
@@ -41,6 +42,7 @@ class RegistrationController: UIViewController {
         let button = AuthButton(type: .system)
         button.setTitle("Sign up", for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20)
+        button.addTarget(self, action: #selector(handleRegistration), for: .touchUpInside)
         return button
     }()
     
@@ -72,6 +74,18 @@ class RegistrationController: UIViewController {
     
     
     //MARK: - Actions
+    
+    @objc func handleRegistration() {
+        guard let email = emailTextField.text else { return }
+        guard let password = passwordTextField.text else { return }
+        
+        print(email)
+        print(password)
+        
+        Auth.auth().createUser(withEmail: email, password: password) { (result, error) in
+            
+        }
+    }
     
     @objc func handleShowLogin() {
         navigationController?.popViewController(animated: true)

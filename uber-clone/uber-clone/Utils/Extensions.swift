@@ -71,7 +71,7 @@ extension UIView {
             
             view.addSubview(textField)
             textField.centerY(inView: view)
-            textField.anchor(left: imageView.rightAnchor, paddingLeft: 8)
+            textField.anchor(left: imageView.rightAnchor, right: view.rightAnchor, paddingLeft: 8, paddingRight: 10)
         }
         
         if let sc = segmentedControl {
