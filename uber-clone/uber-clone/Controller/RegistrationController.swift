@@ -7,6 +7,7 @@
 
 import UIKit
 import Firebase
+import FirebaseFirestore
 
 class RegistrationController: UIViewController {
     
@@ -78,11 +79,28 @@ class RegistrationController: UIViewController {
     @objc func handleRegistration() {
         guard let email = emailTextField.text else { return }
         guard let password = passwordTextField.text else { return }
-        
-        print(email)
-        print(password)
+        guard let fullName = nameTextField.text else { return }
+        let accountTypeIndex = accountSegment.selectedSegmentIndex
         
         Auth.auth().createUser(withEmail: email, password: password) { (result, error) in
+            if let error = error {
+                print("DEBUG: \(error.localizedDescription)")
+                return
+            }
+            
+            guard let uid = result?.user.uid else { return }
+            
+            let userData = ["email": email, "fullname": fullName, "accountType": accountTypeIndex] as [String : Any]
+            
+            
+            Firestore.firestore().collection("users").document(uid).setData(userData) { error in
+                if let error = error {
+                    print("DEBUG register: \(error.localizedDescription)")
+                    return
+                }
+                print("Register successful")
+            }
+            
             
         }
     }
