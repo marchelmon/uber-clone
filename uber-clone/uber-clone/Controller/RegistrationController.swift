@@ -98,10 +98,9 @@ class RegistrationController: UIViewController {
                     print("DEBUG register: \(error.localizedDescription)")
                     return
                 }
-                print("Register successful")
-            }
-            
-            
+                self.dismiss(animated: true, completion: nil)
+                
+            } 
         }
     }
     

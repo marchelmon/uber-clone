@@ -3,10 +3,11 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3C0C5BC226481E9D006FEB20 /* HomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C0C5BC126481E9D006FEB20 /* HomeController.swift */; };
 		3CB20D2A2643F77C006D869A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB20D292643F77C006D869A /* AppDelegate.swift */; };
 		3CB20D2C2643F77C006D869A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB20D2B2643F77C006D869A /* SceneDelegate.swift */; };
 		3CB20D312643F77C006D869A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3CB20D2F2643F77C006D869A /* Main.storyboard */; };
@@ -21,6 +22,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3C0C5BC126481E9D006FEB20 /* HomeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeController.swift; sourceTree = "<group>"; };
 		3CB20D262643F77C006D869A /* uber-clone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "uber-clone.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CB20D292643F77C006D869A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3CB20D2B2643F77C006D869A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -107,6 +109,7 @@
 			children = (
 				3CB20D442643F8F8006D869A /* LoginController.swift */,
 				3CB20D4E2645503A006D869A /* RegistrationController.swift */,
+				3C0C5BC126481E9D006FEB20 /* HomeController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -140,7 +143,6 @@
 				86C341AD1EA082347E99DE44 /* Pods-uber-clone.debug.xcconfig */,
 				D051929ECC34FED016A531A5 /* Pods-uber-clone.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -261,6 +263,7 @@
 			files = (
 				3CB20D2A2643F77C006D869A /* AppDelegate.swift in Sources */,
 				3CB20D522645664C006D869A /* AuthButton.swift in Sources */,
+				3C0C5BC226481E9D006FEB20 /* HomeController.swift in Sources */,
 				3CB20D452643F8F8006D869A /* LoginController.swift in Sources */,
 				3CB20D2C2643F77C006D869A /* SceneDelegate.swift in Sources */,
 				3CB20D4F2645503A006D869A /* RegistrationController.swift in Sources */,
