@@ -15,11 +15,17 @@ class HomeController: UIViewController {
     
     private let mapView = MKMapView()
     
+    private let locationManager = CLLocationManager()
+    
+    private let locationInputView = LocationInputView()
+    
     
     //MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        enableLocationServices()
         checkIfUserIsLoggedIn()
         configureUI()
         
@@ -51,8 +57,55 @@ class HomeController: UIViewController {
     //MARK: - Helpers
     
     func configureUI() {
-        view.addSubview(mapView)
-        mapView.frame = view.frame
+        configureMapView()
+        
+        view.addSubview(locationInputView)
+        locationInputView.centerX(inView: view)
+        locationInputView.setDimensions(width: view.frame.width - 64, height: 50)
+        locationInputView.anchor(top: view.safeAreaLayoutGuide.topAnchor, paddingTop: 32)
+        
     }
     
+    func configureMapView() {
+        view.addSubview(mapView)
+        mapView.frame = view.frame
+        
+        mapView.showsUserLocation = true
+        mapView.userTrackingMode = .follow
+        
+        
+    }
+    
+}
+
+//MARK: - LocationServices
+
+extension HomeController: CLLocationManagerDelegate {
+    func enableLocationServices() {
+        locationManager.delegate = self
+        
+        print(locationManager.authorizationStatus == .authorizedAlways)
+        
+        switch locationManager.authorizationStatus {
+        case .notDetermined:
+            locationManager.requestWhenInUseAuthorization()
+        case .restricted, .denied:
+            print("Restricted")
+        case .authorizedAlways:
+            locationManager.startUpdatingLocation()
+            locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        case .authorizedWhenInUse:
+            locationManager.requestAlwaysAuthorization()
+        @unknown default:
+            print("DEFAULT")
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        
+        if status == .authorizedWhenInUse {
+            locationManager.requestAlwaysAuthorization()
+        }
+        
+    }
 }

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		3C0C5BC226481E9D006FEB20 /* HomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C0C5BC126481E9D006FEB20 /* HomeController.swift */; };
+		3C0C5BC62649411A006FEB20 /* LocationInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C0C5BC52649411A006FEB20 /* LocationInputView.swift */; };
 		3CB20D2A2643F77C006D869A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB20D292643F77C006D869A /* AppDelegate.swift */; };
 		3CB20D2C2643F77C006D869A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB20D2B2643F77C006D869A /* SceneDelegate.swift */; };
 		3CB20D312643F77C006D869A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3CB20D2F2643F77C006D869A /* Main.storyboard */; };
@@ -23,6 +24,7 @@
 
 /* Begin PBXFileReference section */
 		3C0C5BC126481E9D006FEB20 /* HomeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeController.swift; sourceTree = "<group>"; };
+		3C0C5BC52649411A006FEB20 /* LocationInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationInputView.swift; sourceTree = "<group>"; };
 		3CB20D262643F77C006D869A /* uber-clone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "uber-clone.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CB20D292643F77C006D869A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3CB20D2B2643F77C006D869A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -118,6 +120,7 @@
 			isa = PBXGroup;
 			children = (
 				3CB20D512645664C006D869A /* AuthButton.swift */,
+				3C0C5BC52649411A006FEB20 /* LocationInputView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -267,6 +270,7 @@
 				3CB20D452643F8F8006D869A /* LoginController.swift in Sources */,
 				3CB20D2C2643F77C006D869A /* SceneDelegate.swift in Sources */,
 				3CB20D4F2645503A006D869A /* RegistrationController.swift in Sources */,
+				3C0C5BC62649411A006FEB20 /* LocationInputView.swift in Sources */,
 				3CB20D482644591D006D869A /* Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
