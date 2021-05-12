@@ -36,11 +36,16 @@ class HomeController: UIViewController {
         enableLocationServices()
         checkIfUserIsLoggedIn()
         configureUI()
+        fetchUserData()
         
     }
     
     
     //MARK: - API
+    
+    func fetchUserData() {
+        Service.shared.fetchUserData()
+    }
     
     func checkIfUserIsLoggedIn() {
         if Auth.auth().currentUser == nil {
@@ -49,8 +54,6 @@ class HomeController: UIViewController {
                 controller.modalPresentationStyle = .fullScreen
                 self.present(controller, animated: true, completion: nil)
             }
-        } else {
-            print("uid: \(Auth.auth().currentUser!.uid)")
         }
     }
     
