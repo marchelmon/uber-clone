@@ -8,10 +8,13 @@
 import UIKit
 import Firebase
 import FirebaseFirestore
+import GeoFire
 
 class RegistrationController: UIViewController {
     
     //MARK: - Properties
+    
+    private var location = LocationHandler.shared.locationManager.location
     
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -70,6 +73,8 @@ class RegistrationController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
+        
+
 
     }
     
@@ -91,16 +96,56 @@ class RegistrationController: UIViewController {
             guard let uid = result?.user.uid else { return }
             
             let userData = ["email": email, "fullname": fullName, "accountType": accountTypeIndex] as [String : Any]
+//
+//            let latitude = 51.5074
+//            let longitude = 0.12780
+//            let loc = CLLocationCoordinate2D(latitude: location?.latitude!, longitude: longitude)
+//
+//            let hash = GFUtils.geoHash(forLocation: location)
+//
+//            let documentData: [String: Any] = [
+//                "geohash": hash,
+//                "lat": latitude,
+//                "lng": longitude
+//            ]
             
-            
-            Firestore.firestore().collection("users").document(uid).setData(userData) { error in
-                if let error = error {
-                    print("DEBUG register: \(error.localizedDescription)")
-                    return
-                }
-                self.dismiss(animated: true, completion: nil)
+            if accountTypeIndex == 1 {
                 
-            } 
+                
+                guard let latitude = self.location?.coordinate.latitude else { return }
+                guard let longitude = self.location?.coordinate.longitude else { return }
+                
+                let locationData: [String: Any] = [
+                    "driverUid": uid,
+                    "lat": latitude,
+                    "lng": longitude
+                ]
+                
+                let driverLocationRef = DRIVER_LOCATIONS.document(uid)
+                driverLocationRef.updateData(locationData) { error in
+                    if let error = error {
+                        print("Error updating user location: \(error.localizedDescription)")
+                        return
+                    }
+                    
+                }
+                
+                
+                let geofire = GeoFire()
+                let loc = CLLocation(latitude: latitude, longitude: longitude)
+                
+                geofire.setLocation(loc, forKey: uid) { error in
+                    if let error = error {
+                        print("ERROR: \(error.localizedDescription)")
+                        return
+                    }
+                }
+                self.addUserToFirestoreAndDismiss()
+            }
+            
+            
+            self.addUserToFirestoreAndDismiss()
+
         }
     }
     
@@ -109,6 +154,16 @@ class RegistrationController: UIViewController {
     }
     
     //MARK: - Helpers
+    
+    func addUserToFirestoreAndDismiss() {
+        COLLECTION_USERS.document(uid).setData(userData) { error in
+            if let error = error {
+                print("DEBUG register: \(error.localizedDescription)")
+                return
+            }
+            self.dismiss(animated: true, completion: nil)
+        }
+    }
     
     func configureUI() {
         view.backgroundColor = UIColor.backgroundColor

@@ -13,6 +13,7 @@
 		3C579766264BBB90009371C8 /* LocationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C579765264BBB90009371C8 /* LocationCell.swift */; };
 		3C579769264BC787009371C8 /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C579768264BC787009371C8 /* Service.swift */; };
 		3C57976C264BE8EB009371C8 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C57976B264BE8EB009371C8 /* User.swift */; };
+		3C579787264D7095009371C8 /* LocationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C579786264D7095009371C8 /* LocationHandler.swift */; };
 		3CB20D2A2643F77C006D869A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB20D292643F77C006D869A /* AppDelegate.swift */; };
 		3CB20D2C2643F77C006D869A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB20D2B2643F77C006D869A /* SceneDelegate.swift */; };
 		3CB20D312643F77C006D869A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3CB20D2F2643F77C006D869A /* Main.storyboard */; };
@@ -33,6 +34,7 @@
 		3C579765264BBB90009371C8 /* LocationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationCell.swift; sourceTree = "<group>"; };
 		3C579768264BC787009371C8 /* Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
 		3C57976B264BE8EB009371C8 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		3C579786264D7095009371C8 /* LocationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationHandler.swift; sourceTree = "<group>"; };
 		3CB20D262643F77C006D869A /* uber-clone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "uber-clone.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CB20D292643F77C006D869A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3CB20D2B2643F77C006D869A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -111,6 +113,7 @@
 			isa = PBXGroup;
 			children = (
 				3CB20D472644591C006D869A /* Extensions.swift */,
+				3C579786264D7095009371C8 /* LocationHandler.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -283,6 +286,7 @@
 				3CB20D452643F8F8006D869A /* LoginController.swift in Sources */,
 				3CB20D2C2643F77C006D869A /* SceneDelegate.swift in Sources */,
 				3C579766264BBB90009371C8 /* LocationCell.swift in Sources */,
+				3C579787264D7095009371C8 /* LocationHandler.swift in Sources */,
 				3CB20D4F2645503A006D869A /* RegistrationController.swift in Sources */,
 				3C57976C264BE8EB009371C8 /* User.swift in Sources */,
 				3C579769264BC787009371C8 /* Service.swift in Sources */,
