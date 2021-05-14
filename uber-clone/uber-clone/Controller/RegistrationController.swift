@@ -26,7 +26,7 @@ class RegistrationController: UIViewController {
     
     private let emailTextField = UITextField().textField(placeholder: "Email")
     private let nameTextField = UITextField().textField(placeholder: "Full name")
-    private let passwordTextField = UITextField().textField(placeholder: "Password", isSecureText: true)
+    private let passwordTextField = UITextField().textField(placeholder: "Password")
             
     private lazy var emailContainerView = UIView().inputContainerView(image: #imageLiteral(resourceName: "ic_mail_outline_white_2x"), textField: emailTextField)
     private lazy var nameContainerView = UIView().inputContainerView(image: #imageLiteral(resourceName: "ic_person_outline_white_2x"), textField: nameTextField)
@@ -92,60 +92,33 @@ class RegistrationController: UIViewController {
                 print("DEBUG: \(error.localizedDescription)")
                 return
             }
-            
             guard let uid = result?.user.uid else { return }
             
             let userData = ["email": email, "fullname": fullName, "accountType": accountTypeIndex] as [String : Any]
-//
-//            let latitude = 51.5074
-//            let longitude = 0.12780
-//            let loc = CLLocationCoordinate2D(latitude: location?.latitude!, longitude: longitude)
-//
-//            let hash = GFUtils.geoHash(forLocation: location)
-//
-//            let documentData: [String: Any] = [
-//                "geohash": hash,
-//                "lat": latitude,
-//                "lng": longitude
-//            ]
             
             if accountTypeIndex == 1 {
-                
                 
                 guard let latitude = self.location?.coordinate.latitude else { return }
                 guard let longitude = self.location?.coordinate.longitude else { return }
                 
+                let hash = GFUtils.geoHash(forLocation: CLLocationCoordinate2D(latitude: latitude, longitude: longitude))
+                                
                 let locationData: [String: Any] = [
-                    "driverUid": uid,
+                    "geohash": hash,
                     "lat": latitude,
                     "lng": longitude
                 ]
                 
-                let driverLocationRef = DRIVER_LOCATIONS.document(uid)
-                driverLocationRef.updateData(locationData) { error in
+                DRIVER_LOCATIONS.document(uid).setData(locationData) { error in
                     if let error = error {
                         print("Error updating user location: \(error.localizedDescription)")
                         return
                     }
-                    
+                    self.addUserToFirestoreAndShowHomeController(uid: uid, userData: userData)
                 }
-                
-                
-                let geofire = GeoFire()
-                let loc = CLLocation(latitude: latitude, longitude: longitude)
-                
-                geofire.setLocation(loc, forKey: uid) { error in
-                    if let error = error {
-                        print("ERROR: \(error.localizedDescription)")
-                        return
-                    }
-                }
-                self.addUserToFirestoreAndDismiss()
+            } else {
+                self.addUserToFirestoreAndShowHomeController(uid: uid, userData: userData)
             }
-            
-            
-            self.addUserToFirestoreAndDismiss()
-
         }
     }
     
@@ -155,7 +128,7 @@ class RegistrationController: UIViewController {
     
     //MARK: - Helpers
     
-    func addUserToFirestoreAndDismiss() {
+    func addUserToFirestoreAndShowHomeController(uid: String, userData: [String: Any]) {
         COLLECTION_USERS.document(uid).setData(userData) { error in
             if let error = error {
                 print("DEBUG register: \(error.localizedDescription)")

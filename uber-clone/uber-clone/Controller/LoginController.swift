@@ -21,7 +21,7 @@ class LoginController: UIViewController {
     }()
     
     private let emailTextField = UITextField().textField(placeholder: "Email")
-    private let passwordTextField = UITextField().textField(placeholder: "Password", isSecureText: true)
+    private let passwordTextField = UITextField().textField(placeholder: "Password")
         
     private lazy var emailContainerView = UIView().inputContainerView(image: #imageLiteral(resourceName: "ic_mail_outline_white_2x"), textField: emailTextField)
     private lazy var passwordContainerView = UIView().inputContainerView(image: #imageLiteral(resourceName: "ic_lock_outline_white_2x"), textField: passwordTextField)

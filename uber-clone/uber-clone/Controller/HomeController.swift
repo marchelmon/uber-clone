@@ -45,7 +45,6 @@ class HomeController: UIViewController {
         
     }
     
-    
     //MARK: - API
     
     func fetchUserData() {
