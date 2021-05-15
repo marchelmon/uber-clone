@@ -24,7 +24,8 @@ class LocationHandler: NSObject, CLLocationManagerDelegate {
         if status == .authorizedWhenInUse {
             locationManager.requestAlwaysAuthorization()
         }
-        
     }
+    
+    
         
 }

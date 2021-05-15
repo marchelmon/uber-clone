@@ -41,15 +41,26 @@ class HomeController: UIViewController {
         checkIfUserIsLoggedIn()
         configureUI()
         fetchUserData()
-        signOut()
+        fetchDrivers()
         
     }
     
     //MARK: - API
     
     func fetchUserData() {
-        Service.shared.fetchUserData { user in
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        Service.shared.fetchUserData(uid: uid) { user in
             self.user = user
+        }
+    }
+    
+    func fetchDrivers() {
+        guard let location = locationManager.location else { return }
+        Service.shared.fetchDrivers(userLocation: location) { driver in
+            guard let coordinate = driver.location?.coordinate else { return }
+            let annotation = DriverAnnotation(uid: driver.uid, coordinate: coordinate)
+            self.mapView.addAnnotation(annotation)
+            print("Driver: \(driver.location?.coordinate)")
         }
     }
     

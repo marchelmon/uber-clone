@@ -109,7 +109,7 @@ class RegistrationController: UIViewController {
                     "lng": longitude
                 ]
                 
-                DRIVER_LOCATIONS.document(uid).setData(locationData) { error in
+                COLLECTION_DRIVER_LOCATIONS.document(uid).setData(locationData) { error in
                     if let error = error {
                         print("Error updating user location: \(error.localizedDescription)")
                         return
