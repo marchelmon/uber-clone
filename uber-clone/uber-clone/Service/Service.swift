@@ -7,7 +7,7 @@
 
 import Firebase
 import FirebaseFirestore
-import GeoFire //TODO: TA BORT
+import GeoFire
 
 let DB_REF = Firestore.firestore()
 let COLLECTION_USERS = DB_REF.collection("users")
@@ -53,7 +53,6 @@ struct Service {
                     print("Unable to fetch snapshot data. \(String(describing: error))")
                     return
                 }
-                print("Documents: \(documents.count)")
                 for document in documents {
                     let lat = document.data()["lat"] as? Double ?? 0
                     let lng = document.data()["lng"] as? Double ?? 0
@@ -67,8 +66,6 @@ struct Service {
                             driver.location = coordinates
                             completion(driver)
                         }
-                    } else {
-                        print("Distance fucked up: \(distance)")
                     }
                 }
             }

@@ -73,8 +73,6 @@ class RegistrationController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
-        
-
 
     }
     
@@ -134,6 +132,9 @@ class RegistrationController: UIViewController {
                 print("DEBUG register: \(error.localizedDescription)")
                 return
             }
+            let sceneDelegate = UIApplication.shared.connectedScenes.first!.delegate as? SceneDelegate
+            guard let controller = sceneDelegate?.window?.rootViewController as? HomeController else { return }
+            controller.configure()
             self.dismiss(animated: true, completion: nil)
         }
     }

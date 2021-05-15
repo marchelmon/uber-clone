@@ -23,6 +23,7 @@ class HomeController: UIViewController {
     private let inputActivationView = LocationInputActivationView()
     private let locationInputView = LocationInputView()
     private let tableView = UITableView()
+    private var searchResults = [MKPlacemark]()
     
     private final let locationInputViewHeight: CGFloat = 200
     
@@ -40,14 +41,7 @@ class HomeController: UIViewController {
         
         enableLocationServices()
         checkIfUserIsLoggedIn()
-        configureUI()
-        fetchUserData()
-        fetchDrivers()
-        
-        guard let coordinate = locationManager.location?.coordinate else { return }
-        
-        let region = MKCoordinateRegion(center: coordinate, latitudinalMeters: CLLocationDistance(exactly: 10000)!, longitudinalMeters: CLLocationDistance(exactly: 10000)!)
-        mapView.setRegion(mapView.regionThatFits(region), animated: true)
+    
     }
     
     //MARK: - API
@@ -83,28 +77,36 @@ class HomeController: UIViewController {
     
     func checkIfUserIsLoggedIn() {
         if Auth.auth().currentUser == nil {
-            DispatchQueue.main.async {
-                let controller = UINavigationController(rootViewController: LoginController())
-                controller.modalPresentationStyle = .fullScreen
-                self.present(controller, animated: true, completion: nil)
-            }
+            presentLoginController()
+        } else {
+            configure()
         }
     }
     
     func signOut() {
         do {
             try Auth.auth().signOut()
-            DispatchQueue.main.async {
-                let controller = UINavigationController(rootViewController: LoginController())
-                controller.modalPresentationStyle = .fullScreen
-                self.present(controller, animated: true, completion: nil)
-            }
+            presentLoginController()
         } catch {
             print("DEBUG: ERROR logging out")
         }
     }
     
     //MARK: - Helpers
+    
+    func presentLoginController() {
+        DispatchQueue.main.async {
+            let controller = UINavigationController(rootViewController: LoginController())
+            controller.modalPresentationStyle = .fullScreen
+            self.present(controller, animated: true, completion: nil)
+        }
+    }
+    
+    func configure() {
+        configureUI()
+        fetchUserData()
+        fetchDrivers()
+    }
     
     func configureUI() {
         configureMapView()
@@ -130,7 +132,9 @@ class HomeController: UIViewController {
         mapView.userTrackingMode = .follow
         mapView.delegate = self
         
-        
+        guard let coordinate = locationManager.location?.coordinate else { return }
+        let region = MKCoordinateRegion(center: coordinate, latitudinalMeters: CLLocationDistance(exactly: 30000)!, longitudinalMeters: CLLocationDistance(exactly: 30000)!)
+        mapView.setRegion(mapView.regionThatFits(region), animated: true)
     }
     
     func configureLocationInputView() {
@@ -161,6 +165,29 @@ class HomeController: UIViewController {
 
     }
     
+}
+
+//MARK: - Map helper functions
+
+private extension HomeController {
+    func searchBy(naturalLanguageQuery: String, completion: @escaping([MKPlacemark]) -> Void) {
+        var results = [MKPlacemark]()
+        
+        let request = MKLocalSearch.Request()
+        request.region = mapView.region
+        request.naturalLanguageQuery = naturalLanguageQuery
+        
+        let search = MKLocalSearch(request: request)
+        search.start { (response, error) in
+            guard let response = response else { return }
+            
+            response.mapItems.forEach { item in
+                results.append(item.placemark)
+            }
+            completion(results)
+        }
+        
+    }
 }
 
 //MARK: - MKMapViewDelegate
@@ -218,8 +245,14 @@ extension HomeController: LocationInputViewDelegate {
                 self.inputActivationView.alpha = 1
             }
         }
-
     }
+    func executeSearch(query: String) {
+        searchBy(naturalLanguageQuery: query) { results in
+            self.searchResults = results
+            self.tableView.reloadData()
+        }
+    }
+    
 }
 
 //MARK: - TableViewDelegate, TableViewDataSource
@@ -234,7 +267,7 @@ extension HomeController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return section == 0 ? 2 : 5
+        return section == 0 ? 2 : searchResults.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
