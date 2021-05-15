@@ -44,6 +44,10 @@ class HomeController: UIViewController {
         fetchUserData()
         fetchDrivers()
         
+        guard let coordinate = locationManager.location?.coordinate else { return }
+        
+        let region = MKCoordinateRegion(center: coordinate, latitudinalMeters: CLLocationDistance(exactly: 10000)!, longitudinalMeters: CLLocationDistance(exactly: 10000)!)
+        mapView.setRegion(mapView.regionThatFits(region), animated: true)
     }
     
     //MARK: - API
@@ -60,7 +64,20 @@ class HomeController: UIViewController {
         Service.shared.fetchDrivers(userLocation: location) { driver in
             guard let coordinate = driver.location?.coordinate else { return }
             let annotation = DriverAnnotation(uid: driver.uid, coordinate: coordinate)
-            self.mapView.addAnnotation(annotation)
+
+            var driverIsVisable: Bool {
+                return self.mapView.annotations.contains { annotation -> Bool in
+                    guard let driverAnnotation = annotation as? DriverAnnotation else { return false }
+                    if driverAnnotation.uid == driver.uid {
+                        driverAnnotation.updateAnnotationPosition(withCoordinate: coordinate)
+                        return true
+                    }
+                    return false
+                }
+            }
+            if !driverIsVisable {
+                self.mapView.addAnnotation(annotation)
+            }
         }
     }
     

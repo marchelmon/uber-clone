@@ -34,16 +34,16 @@ struct Service {
 
     func fetchDrivers(userLocation: CLLocation, completion: @escaping(User) -> Void) {
         let currentLocation = CLLocationCoordinate2D(latitude: userLocation.coordinate.latitude, longitude: userLocation.coordinate.longitude)
-        let kmRadius: Double = 1000
-        let queryBounds = GFUtils.queryBounds(forLocation: currentLocation, withRadius: kmRadius)
+        let meterRadius: Double = 1000 * 1000
+        let queryBounds = GFUtils.queryBounds(forLocation: currentLocation, withRadius: meterRadius)
         
         let queries = queryBounds.compactMap { (any) -> Query? in
             guard let bound = any as? GFGeoQueryBounds else { return nil }
             return COLLECTION_DRIVER_LOCATIONS.order(by: "geohash").start(at: [bound.startValue]).end(at: [bound.endValue])
         }
-                
+        
         for query in queries {
-            query.getDocuments { (snapshot, error) in
+            query.addSnapshotListener { (snapshot, error) in
                 
                 if let error = error {
                     print("ERROR: \(error.localizedDescription)")
@@ -53,19 +53,22 @@ struct Service {
                     print("Unable to fetch snapshot data. \(String(describing: error))")
                     return
                 }
-                print(documents.count)
+                print("Documents: \(documents.count)")
                 for document in documents {
                     let lat = document.data()["lat"] as? Double ?? 0
                     let lng = document.data()["lng"] as? Double ?? 0
                     let coordinates = CLLocation(latitude: lat, longitude: lng)
                     
+                    
                     let distance = GFUtils.distance(from: userLocation, to: coordinates)
-                    if distance <= kmRadius {
+                    if distance <= meterRadius {
                         self.fetchUserData(uid: document.documentID) { user in
                             var driver = user
                             driver.location = coordinates
                             completion(driver)
                         }
+                    } else {
+                        print("Distance fucked up: \(distance)")
                     }
                 }
             }
