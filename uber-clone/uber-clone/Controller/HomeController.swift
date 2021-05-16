@@ -12,6 +12,16 @@ import MapKit
 private let reuseIdentifier = "LocationCell"
 private let annotationIdentifier = "DriverAnnotation"
 
+private enum ActionButtonConfig {
+    case showMenu
+    case dismissActionView
+    
+    init() {
+        self = .showMenu
+    }
+    
+}
+
 class HomeController: UIViewController {
     
     //MARK: - Properties
@@ -24,12 +34,19 @@ class HomeController: UIViewController {
     private let locationInputView = LocationInputView()
     private let tableView = UITableView()
     private var searchResults = [MKPlacemark]()
-    
     private final let locationInputViewHeight: CGFloat = 200
+    private var actionButtonConfig = ActionButtonConfig()
     
     private var user: User? {
         didSet { locationInputView.user = user }
     }
+    
+    private let actionButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(#imageLiteral(resourceName: "baseline_menu_black_36dp").withRenderingMode(.alwaysOriginal), for: .normal)
+        button.addTarget(self, action: #selector(actionButtonPressed), for: .touchUpInside)
+        return button
+    }()
     
     //MARK: - Lifecycle
     
@@ -42,6 +59,17 @@ class HomeController: UIViewController {
         enableLocationServices()
         checkIfUserIsLoggedIn()
     
+    }
+    
+    //MARK: - Actions
+    
+    @objc func actionButtonPressed() {
+        switch actionButtonConfig {
+        case .showMenu:
+            print("Handle show menu")
+        case .dismissActionView:
+            print("Handle dismiss")
+        }
     }
     
     //MARK: - API
@@ -112,10 +140,13 @@ class HomeController: UIViewController {
         configureMapView()
         configureTableView()
         
+        view.addSubview(actionButton)
+        actionButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, paddingTop: 16, paddingLeft: 20, width: 30, height: 30)
+        
         view.addSubview(inputActivationView)
         inputActivationView.centerX(inView: view)
         inputActivationView.setDimensions(width: view.frame.width - 64, height: 50)
-        inputActivationView.anchor(top: view.safeAreaLayoutGuide.topAnchor, paddingTop: 32)
+        inputActivationView.anchor(top: actionButton.bottomAnchor, paddingTop: 20)
         inputActivationView.alpha = 0
         
         UIView.animate(withDuration: 2) {
@@ -133,7 +164,7 @@ class HomeController: UIViewController {
         mapView.delegate = self
         
         guard let coordinate = locationManager.location?.coordinate else { return }
-        let region = MKCoordinateRegion(center: coordinate, latitudinalMeters: CLLocationDistance(exactly: 30000)!, longitudinalMeters: CLLocationDistance(exactly: 30000)!)
+        let region = MKCoordinateRegion(center: coordinate, latitudinalMeters: CLLocationDistance(exactly: 10000)!, longitudinalMeters: CLLocationDistance(exactly: 10000)!)
         mapView.setRegion(mapView.regionThatFits(region), animated: true)
     }
     
@@ -163,6 +194,15 @@ class HomeController: UIViewController {
                 
         view.addSubview(tableView)
 
+    }
+    
+    func dismissLocationView(completion: ((Bool) -> Void)? = nil) {
+        UIView.animate(withDuration: 0.3, animations: {
+            self.locationInputView.alpha = 0
+            self.tableView.frame.origin.y = self.view.frame.height
+            self.locationInputView.removeFromSuperview()
+
+        }, completion: completion)
     }
     
 }
@@ -215,11 +255,9 @@ extension HomeController {
         case .restricted, .denied:
             print("Restricted")
         case .authorizedAlways:
-            print("Auth always")
             locationManager.desiredAccuracy = kCLLocationAccuracyBest
             locationManager.startUpdatingLocation()
         case .authorizedWhenInUse:
-            print("HENEIN use")
             locationManager.requestAlwaysAuthorization()
         @unknown default:
             print("DEFAULT")
@@ -236,12 +274,8 @@ extension HomeController: LocationInputActivationViewDelegate {
 
 extension HomeController: LocationInputViewDelegate {
     func dismissLocationInputView() {
-        UIView.animate(withDuration: 0.3) {
-            self.locationInputView.alpha = 0
-            self.tableView.frame.origin.y = self.view.frame.height
-        } completion: { _ in
-            self.locationInputView.removeFromSuperview()
-            UIView.animate(withDuration: 0.3) {
+        dismissLocationView { _ in
+            UIView.animate(withDuration: 0.5) {
                 self.inputActivationView.alpha = 1
             }
         }
@@ -273,9 +307,26 @@ extension HomeController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier) as! LocationCell
         
-        
+        if indexPath.section == 1 {
+            cell.placemark = searchResults[indexPath.row]
+        }
+
         return cell
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let placemark = self.searchResults[indexPath.row]
+        
+        actionButton.setImage(#imageLiteral(resourceName: "baseline_arrow_back_black_36dp-1").withRenderingMode(.alwaysOriginal), for: .normal)
+        actionButtonConfig = .dismissActionView
+        
+        dismissLocationView { _ in
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = placemark.coordinate
+            self.mapView.addAnnotation(annotation)
+            self.mapView.selectAnnotation(annotation, animated: true)
+            
+        }
+    }
     
 }

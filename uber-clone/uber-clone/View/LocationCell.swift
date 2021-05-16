@@ -6,23 +6,30 @@
 //
 
 import UIKit
+import MapKit
 
 class LocationCell: UITableViewCell {
 
     //MARK: - Properties
     
+    var placemark: MKPlacemark? {
+        didSet{
+            titleLabel.text = placemark?.name
+            addressLabel.text = placemark?.address
+        }
+    }
+    
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14)
-        label.text = "lerduvevägen"
         return label
     }()
     
     private let addressLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14)
-        label.text = "lerduvevägen, 436 51, Hovås"
         label.textColor = .lightGray
+        label.numberOfLines = 2
         return label
     }()
     
@@ -37,6 +44,7 @@ class LocationCell: UITableViewCell {
         stack.axis = .vertical
         stack.distribution = .fillEqually
         stack.spacing = 4
+        
         
         addSubview(stack)
         stack.centerY(inView: self, leftAnchor: leftAnchor, paddingLeft: 12)
