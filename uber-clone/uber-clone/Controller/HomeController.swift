@@ -68,7 +68,17 @@ class HomeController: UIViewController {
         case .showMenu:
             print("Handle show menu")
         case .dismissActionView:
-            print("Handle dismiss")
+            
+            mapView.annotations.forEach { annotation in
+                if let anno = annotation as? MKPointAnnotation {
+                    mapView.removeAnnotation(anno)
+                }
+            }
+            
+            UIView.animate(withDuration: 0.3) {
+                self.inputActivationView.alpha = 1
+                self.configureActionButton(config: .showMenu)
+            }
         }
     }
     
@@ -196,6 +206,17 @@ class HomeController: UIViewController {
 
     }
     
+    fileprivate func configureActionButton(config: ActionButtonConfig) {
+        switch config {
+        case .showMenu:
+            self.actionButton.setImage(#imageLiteral(resourceName: "baseline_menu_black_36dp").withRenderingMode(.alwaysOriginal), for: .normal)
+            self.actionButtonConfig = .showMenu
+        case .dismissActionView:
+            actionButton.setImage(#imageLiteral(resourceName: "baseline_arrow_back_black_36dp-1").withRenderingMode(.alwaysOriginal), for: .normal)
+            actionButtonConfig = .dismissActionView
+        }
+    }
+    
     func dismissLocationView(completion: ((Bool) -> Void)? = nil) {
         UIView.animate(withDuration: 0.3, animations: {
             self.locationInputView.alpha = 0
@@ -317,8 +338,7 @@ extension HomeController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let placemark = self.searchResults[indexPath.row]
         
-        actionButton.setImage(#imageLiteral(resourceName: "baseline_arrow_back_black_36dp-1").withRenderingMode(.alwaysOriginal), for: .normal)
-        actionButtonConfig = .dismissActionView
+        configureActionButton(config: .dismissActionView)
         
         dismissLocationView { _ in
             let annotation = MKPointAnnotation()
