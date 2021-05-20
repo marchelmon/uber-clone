@@ -60,7 +60,7 @@ class RegistrationController: UIViewController {
         attributedTitle.append(NSAttributedString(
             string: " Login",
             attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 16),
-                         NSAttributedString.Key.foregroundColor: UIColor.mainBlueInt]))
+                         NSAttributedString.Key.foregroundColor: UIColor.mainBlueTint]))
         button.setAttributedTitle(attributedTitle, for: .normal)
         
         button.addTarget(self, action: #selector(handleShowLogin), for: .touchUpInside)

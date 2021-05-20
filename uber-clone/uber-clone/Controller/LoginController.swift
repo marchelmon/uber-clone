@@ -44,7 +44,7 @@ class LoginController: UIViewController {
         attributedTitle.append(NSAttributedString(
             string: " Sign up",
             attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 16),
-                         NSAttributedString.Key.foregroundColor: UIColor.mainBlueInt]))
+                         NSAttributedString.Key.foregroundColor: UIColor.mainBlueTint]))
         button.setAttributedTitle(attributedTitle, for: .normal)
         
         button.addTarget(self, action: #selector(handleShowSignUp), for: .touchUpInside)

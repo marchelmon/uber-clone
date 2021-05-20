@@ -36,6 +36,7 @@ class HomeController: UIViewController {
     private var searchResults = [MKPlacemark]()
     private final let locationInputViewHeight: CGFloat = 200
     private var actionButtonConfig = ActionButtonConfig()
+    private var route: MKRoute?
     
     private var user: User? {
         didSet { locationInputView.user = user }
@@ -247,8 +248,24 @@ private extension HomeController {
             }
             completion(results)
         }
-        
     }
+    func generatePolyline(toDestionation destination: MKMapItem) {
+        
+        let request = MKDirections.Request()
+        request.source = MKMapItem.forCurrentLocation()
+        request.destination = destination
+        request.transportType = .automobile
+        
+        let directionRequest = MKDirections(request: request)
+        directionRequest.calculate { (response, error) in
+            guard let response = response else { return }
+            self.route = response.routes[0]
+            guard let polyline = self.route?.polyline else { return }
+            self.mapView.addOverlay(polyline)
+            
+        }
+    }
+    
 }
 
 //MARK: - MKMapViewDelegate
@@ -262,6 +279,17 @@ extension HomeController: MKMapViewDelegate {
             return view
         }
         return nil
+    }
+    
+    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+        if let route = self.route {
+            let polyline = route.polyline
+            let lineRenderer = MKPolylineRenderer(polyline: polyline)
+            lineRenderer.strokeColor = .mainBlueTint
+            lineRenderer.lineWidth = 4
+            return lineRenderer
+        }
+        return MKOverlayRenderer()
     }
     
 }
@@ -339,6 +367,9 @@ extension HomeController: UITableViewDelegate, UITableViewDataSource {
         let placemark = self.searchResults[indexPath.row]
         
         configureActionButton(config: .dismissActionView)
+        
+        let destination = MKMapItem(placemark: placemark)
+        generatePolyline(toDestionation: destination)
         
         dismissLocationView { _ in
             let annotation = MKPointAnnotation()
