@@ -31,6 +31,7 @@ class HomeController: UIViewController {
     private let locationManager: CLLocationManager = LocationHandler.shared.locationManager
     
     private let inputActivationView = LocationInputActivationView()
+    private let rideActionView = RideActionView()
     private let locationInputView = LocationInputView()
     private let tableView = UITableView()
     private var searchResults = [MKPlacemark]()
@@ -76,6 +77,8 @@ class HomeController: UIViewController {
                 self.inputActivationView.alpha = 1
                 self.configureActionButton(config: .showMenu)
             }
+            
+            mapView.showAnnotations(mapView.annotations, animated: true)
         }
     }
     
@@ -186,6 +189,10 @@ class HomeController: UIViewController {
         UIView.animate(withDuration: 0.5) {
             self.locationInputView.alpha = 1
         }
+    }
+    
+    func configureRideActionView() {
+        view.addSubview(rideActionView)
     }
     
     func configureTableView() {
@@ -383,8 +390,17 @@ extension HomeController: UITableViewDelegate, UITableViewDataSource {
             annotation.coordinate = placemark.coordinate
             self.mapView.addAnnotation(annotation)
             self.mapView.selectAnnotation(annotation, animated: true)
+         
+            let annotations = self.mapView.annotations.filter({ !$0.isKind(of: DriverAnnotation.self) })
+            
+            self.mapView.showAnnotations(annotations, animated: true)
             
         }
     }
     
 }
+
+
+
+
+
