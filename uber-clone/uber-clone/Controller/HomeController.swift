@@ -149,6 +149,7 @@ class HomeController: UIViewController {
     func configureUI() {
         configureMapView()
         configureTableView()
+        configureRideActionView()
         
         view.addSubview(actionButton)
         actionButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, paddingTop: 16, paddingLeft: 20, width: 30, height: 30)
@@ -193,6 +194,7 @@ class HomeController: UIViewController {
     
     func configureRideActionView() {
         view.addSubview(rideActionView)
+        rideActionView.frame = CGRect(x: 0, y: view.frame.height - 300, width: view.frame.width, height: 300)
     }
     
     func configureTableView() {
