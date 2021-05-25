@@ -36,6 +36,7 @@ class HomeController: UIViewController {
     private let tableView = UITableView()
     private var searchResults = [MKPlacemark]()
     private final let locationInputViewHeight: CGFloat = 200
+    private final let rideActionViewHeight: CGFloat = 300
     private var actionButtonConfig = ActionButtonConfig()
     private var route: MKRoute?
     
@@ -194,7 +195,7 @@ class HomeController: UIViewController {
     
     func configureRideActionView() {
         view.addSubview(rideActionView)
-        rideActionView.frame = CGRect(x: 0, y: view.frame.height - 300, width: view.frame.width, height: 300)
+        rideActionView.frame = CGRect(x: 0, y: view.frame.height, width: view.frame.width, height: rideActionViewHeight)
     }
     
     func configureTableView() {
@@ -230,6 +231,19 @@ class HomeController: UIViewController {
             self.locationInputView.removeFromSuperview()
 
         }, completion: completion)
+    }
+    
+    func animateRideActionView(shouldShow: Bool, destination: MKPlacemark? = nil) {
+        let yOrigin = self.view.frame.height - (shouldShow ? self.rideActionViewHeight : 0)
+        
+        if shouldShow {
+            guard let destination = destination else { return }
+            self.rideActionView.destination = destination
+        }
+        
+        UIView.animate(withDuration: 0.3) {
+            self.rideActionView.frame.origin.y = yOrigin
+        }
     }
     
 }
@@ -380,22 +394,24 @@ extension HomeController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let placemark = self.searchResults[indexPath.row]
+        let selectedPlacemark = self.searchResults[indexPath.row]
         
         configureActionButton(config: .dismissActionView)
         
-        let destination = MKMapItem(placemark: placemark)
+        let destination = MKMapItem(placemark: selectedPlacemark)
         generatePolyline(toDestionation: destination)
         
         dismissLocationView { _ in
             let annotation = MKPointAnnotation()
-            annotation.coordinate = placemark.coordinate
+            annotation.coordinate = selectedPlacemark.coordinate
             self.mapView.addAnnotation(annotation)
             self.mapView.selectAnnotation(annotation, animated: true)
          
             let annotations = self.mapView.annotations.filter({ !$0.isKind(of: DriverAnnotation.self) })
             
             self.mapView.showAnnotations(annotations, animated: true)
+            
+            self.animateRideActionView(shouldShow: true, destination: selectedPlacemark)
             
         }
     }
