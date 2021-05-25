@@ -34,7 +34,7 @@ struct Service {
 
     func fetchDrivers(userLocation: CLLocation, completion: @escaping(User) -> Void) {
         let currentLocation = CLLocationCoordinate2D(latitude: userLocation.coordinate.latitude, longitude: userLocation.coordinate.longitude)
-        let meterRadius: Double = 1000 * 1000
+        let meterRadius: Double = 20 * 1000 //10 mil
         let queryBounds = GFUtils.queryBounds(forLocation: currentLocation, withRadius: meterRadius)
         
         let queries = queryBounds.compactMap { (any) -> Query? in
