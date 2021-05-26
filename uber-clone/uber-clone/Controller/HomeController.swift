@@ -41,7 +41,13 @@ class HomeController: UIViewController {
     private var route: MKRoute?
     
     private var user: User? {
-        didSet { locationInputView.user = user }
+        didSet {
+            locationInputView.user = user
+            if user?.accountType == .passenger {
+                fetchDrivers()
+                configureInputActivationView()
+            }
+        }
     }
     
     private let actionButton: UIButton = {
@@ -146,7 +152,6 @@ class HomeController: UIViewController {
     func configure() {
         configureUI()
         fetchUserData()
-        fetchDrivers()
     }
     
     func configureUI() {
@@ -157,16 +162,18 @@ class HomeController: UIViewController {
         view.addSubview(actionButton)
         actionButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, paddingTop: 16, paddingLeft: 20, width: 30, height: 30)
         
+        UIView.animate(withDuration: 2) {
+            self.inputActivationView.alpha = 1
+        }
+        
+    }
+    
+    func configureInputActivationView() {
         view.addSubview(inputActivationView)
         inputActivationView.centerX(inView: view)
         inputActivationView.setDimensions(width: view.frame.width - 64, height: 50)
         inputActivationView.anchor(top: actionButton.bottomAnchor, paddingTop: 20)
         inputActivationView.alpha = 0
-        
-        UIView.animate(withDuration: 2) {
-            self.inputActivationView.alpha = 1
-        }
-        
     }
     
     func configureMapView() {

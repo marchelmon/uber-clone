@@ -79,7 +79,11 @@ struct Service {
         let pickUpArray = [pickUpCoordinates.latitude, pickUpCoordinates.longitude]
         let destinationArray = [destinationCoordinates.latitude, destinationCoordinates.longitude]
         
-        let values = ["pickupCoordinates": pickUpArray, "destinationCoordinates": destinationArray]
+        let values = [
+            "pickupCoordinates": pickUpArray,
+            "destinationCoordinates": destinationArray,
+            "state": TripState.requested.rawValue
+        ] as [String: Any]
         
         
         COLLECTION_TRIPS.document(uid).setData(values, completion: completion)
