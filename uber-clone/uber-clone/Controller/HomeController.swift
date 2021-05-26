@@ -58,6 +58,7 @@ class HomeController: UIViewController {
         
         inputActivationView.delegate = self
         locationInputView.delegate = self
+        rideActionView.delegate = self
         
         enableLocationServices()
         checkIfUserIsLoggedIn()
@@ -416,7 +417,24 @@ extension HomeController: UITableViewDelegate, UITableViewDataSource {
             
         }
     }
-    
+}
+
+//MARK: - RideActionViewDelegate
+
+extension HomeController: RideActionViewDelegate {
+    func uploadTrip(_ view: RideActionView) {
+        guard let pickupCoordinates = locationManager.location?.coordinate else { return }
+        guard let destinationCoordinates = view.destination?.coordinate else { return }
+        
+        Service.shared.uploadTrip(pickupCoordinates, destinationCoordinates: destinationCoordinates) { error in
+            if let error = error {
+                print("No trip uploaded error: \(error.localizedDescription)")
+                return
+            }
+            
+            print("TRIPS upload ja")
+        }
+    }
 }
 
 

@@ -12,6 +12,7 @@ import GeoFire
 let DB_REF = Firestore.firestore()
 let COLLECTION_USERS = DB_REF.collection("users")
 let COLLECTION_DRIVER_LOCATIONS = DB_REF.collection("driver-locations")
+let COLLECTION_TRIPS = DB_REF.collection("trips")
 
 struct Service {
     
@@ -70,5 +71,17 @@ struct Service {
                 }
             }
         }
+    }
+    
+    func uploadTrip(_ pickUpCoordinates: CLLocationCoordinate2D, destinationCoordinates: CLLocationCoordinate2D, completion: @escaping(Error?) -> Void) {
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        
+        let pickUpArray = [pickUpCoordinates.latitude, pickUpCoordinates.longitude]
+        let destinationArray = [destinationCoordinates.latitude, destinationCoordinates.longitude]
+        
+        let values = ["pickupCoordinates": pickUpArray, "destinationCoordinates": destinationArray]
+        
+        
+        COLLECTION_TRIPS.document(uid).setData(values, completion: completion)
     }
 }
