@@ -46,7 +46,15 @@ class HomeController: UIViewController {
             if user?.accountType == .passenger {
                 fetchDrivers()
                 configureInputActivationView()
+            } else {
+                observeTrips()
             }
+        }
+    }
+    
+    private var trip: Trip? {
+        didSet {
+            print("Handle trip, show pcikup passenger controller")
         }
     }
     
@@ -130,6 +138,12 @@ class HomeController: UIViewController {
         }
     }
     
+    func observeTrips() {
+        Service.shared.observeTrips { trip in
+            self.trip = trip
+        }
+    }
+    
     func signOut() {
         do {
             try Auth.auth().signOut()
@@ -162,10 +176,6 @@ class HomeController: UIViewController {
         view.addSubview(actionButton)
         actionButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, paddingTop: 16, paddingLeft: 20, width: 30, height: 30)
         
-        UIView.animate(withDuration: 2) {
-            self.inputActivationView.alpha = 1
-        }
-        
     }
     
     func configureInputActivationView() {
@@ -174,6 +184,10 @@ class HomeController: UIViewController {
         inputActivationView.setDimensions(width: view.frame.width - 64, height: 50)
         inputActivationView.anchor(top: actionButton.bottomAnchor, paddingTop: 20)
         inputActivationView.alpha = 0
+        
+        UIView.animate(withDuration: 2) {
+            self.inputActivationView.alpha = 1
+        }
     }
     
     func configureMapView() {

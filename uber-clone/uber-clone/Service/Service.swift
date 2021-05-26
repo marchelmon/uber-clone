@@ -85,7 +85,28 @@ struct Service {
             "state": TripState.requested.rawValue
         ] as [String: Any]
         
-        
         COLLECTION_TRIPS.document(uid).setData(values, completion: completion)
     }
+    
+    func observeTrips(completion: @escaping(Trip) -> Void) {
+        COLLECTION_TRIPS.addSnapshotListener { (snapshot, error) in
+            if let error = error {
+                print("Error observe trips: \(error.localizedDescription)")
+            }
+            
+            guard let documents = snapshot?.documents else { print("No documents"); return }
+            
+            for document in documents {
+                let data = document.data()
+                
+                let trip = Trip(passengerUid: document.documentID, dictionary: data)
+                
+                completion(trip)
+                
+                
+            }
+        }
+
+    }
+    
 }
