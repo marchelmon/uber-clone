@@ -8,9 +8,15 @@
 import UIKit
 import MapKit
 
+protocol PickupControllerDelegate: class {
+    func didAcceptTrip(_ trip: Trip)
+}
+
 class PickupController: UIViewController {
     
     //MARK: - Properties
+    
+    weak var delegate: PickupControllerDelegate?
     
     private let mapView = MKMapView()
     let trip: Trip
@@ -67,7 +73,9 @@ class PickupController: UIViewController {
     //MARK: - Actions
     
     @objc func handleAcceptTrip() {
-        print("Accept")
+        Service.shared.acceptTrip(trip: trip) { error in
+            self.delegate?.didAcceptTrip(self.trip)
+        }
     }
     
     @objc func handleDismissal() {

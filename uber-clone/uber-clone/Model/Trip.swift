@@ -12,8 +12,8 @@ import CoreLocation
 
 enum TripState: Int {
     case requested
-    case isAccepted
-    case inProgress
+    case accepted
+    case progressing
     case completed
 }
 

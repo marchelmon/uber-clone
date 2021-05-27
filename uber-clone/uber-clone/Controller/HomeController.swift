@@ -48,6 +48,7 @@ class HomeController: UIViewController {
                 configureInputActivationView()
             } else {
                 observeTrips()
+                print("Should be driver but: \(user?.accountType.rawValue)")
             }
         }
     }
@@ -56,6 +57,7 @@ class HomeController: UIViewController {
         didSet {
             guard let trip = trip else { return }
             let controller = PickupController(trip: trip)
+            controller.delegate = self
             controller.modalPresentationStyle = .fullScreen
             present(controller, animated: true, completion: nil)
         }
@@ -79,7 +81,13 @@ class HomeController: UIViewController {
         
         enableLocationServices()
         checkIfUserIsLoggedIn()
+    }
     
+    override func viewDidAppear(_ animated: Bool) {
+
+        guard let trip = trip else { return }
+        
+        print("TRIP: \(trip.state)")
     }
     
     //MARK: - Actions
@@ -450,15 +458,29 @@ extension HomeController: RideActionViewDelegate {
         guard let pickupCoordinates = locationManager.location?.coordinate else { return }
         guard let destinationCoordinates = view.destination?.coordinate else { return }
         
+        shouldPresentLoadingView(true, message: "Looking for your ride...")
+        
         Service.shared.uploadTrip(pickupCoordinates, destinationCoordinates: destinationCoordinates) { error in
             if let error = error {
                 print("No trip uploaded error: \(error.localizedDescription)")
                 return
             }
-            
-            print("TRIPS upload ja")
+            UIView.animate(withDuration: 0.3) {
+                self.rideActionView.frame.origin.y = self.view.frame.height
+            }
         }
     }
+}
+
+//MARK: - PickupControllerDelegate
+
+extension HomeController: PickupControllerDelegate {
+    
+    func didAcceptTrip(_ trip: Trip) {
+        self.trip?.state = .accepted
+        self.dismiss(animated: true, completion: nil)
+    }
+    
 }
 
 

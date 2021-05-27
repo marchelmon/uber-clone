@@ -106,7 +106,13 @@ struct Service {
                 
             }
         }
-
+    }
+    
+    func acceptTrip(trip: Trip, completion: @escaping(Error?) -> Void) {
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        let values = ["driverUid": uid, "state": TripState.accepted.rawValue] as [String: Any]
+        
+        COLLECTION_TRIPS.document(trip.passengerUid).updateData(values, completion: completion)
     }
     
 }
