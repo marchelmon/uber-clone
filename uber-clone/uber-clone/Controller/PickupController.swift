@@ -57,6 +57,7 @@ class PickupController: UIViewController {
         super.viewDidLoad()
         
         configureUI()
+        configureMapView()
     }
     
     override var prefersStatusBarHidden: Bool {
@@ -91,12 +92,22 @@ class PickupController: UIViewController {
         mapView.centerY(inView: view, constant: -120)
         
         view.addSubview(pickupLabel)
-        pickupLabel.anchor(top: mapView.bottomAnchor, paddingTop: 15)
+        pickupLabel.anchor(top: mapView.bottomAnchor, paddingTop: 25)
         pickupLabel.centerX(inView: view)
         
         view.addSubview(acceptTripButton)
         acceptTripButton.anchor(top: pickupLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, paddingTop: 20, paddingLeft: 32, paddingRight: 32, height: 50)
         
+    }
+    
+    func configureMapView() {
+        let region = MKCoordinateRegion(center: trip.pickupCoordinates, latitudinalMeters: 3000, longitudinalMeters: 3000)
+        mapView.setRegion(region, animated: false)
+        
+        let annotation = MKPointAnnotation()
+        annotation.coordinate = trip.pickupCoordinates
+        mapView.addAnnotation(annotation)
+        mapView.selectAnnotation(annotation, animated: true)
     }
     
     
