@@ -122,4 +122,10 @@ struct Service {
         }
     }
     
+    func cancelTrip(completion: @escaping(Error?) -> Void) {
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        
+        COLLECTION_TRIPS.document(uid).delete(completion: completion)
+    }
+    
 }
