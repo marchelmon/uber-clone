@@ -46,20 +46,25 @@ class HomeController: UIViewController {
             if user?.accountType == .passenger {
                 fetchDrivers()
                 configureInputActivationView()
+                observeCurrentTrip()
             } else {
                 observeTrips()
-                print("Should be driver but: \(user?.accountType.rawValue)")
             }
         }
     }
     
     private var trip: Trip? {
         didSet {
-            guard let trip = trip else { return }
-            let controller = PickupController(trip: trip)
-            controller.delegate = self
-            controller.modalPresentationStyle = .fullScreen
-            present(controller, animated: true, completion: nil)
+            guard let user = user else { return }
+            if user.accountType == .driver {
+                guard let trip = trip else { return }
+                let controller = PickupController(trip: trip)
+                controller.delegate = self
+                controller.modalPresentationStyle = .fullScreen
+                present(controller, animated: true, completion: nil)
+            } else {
+                print("DEBUG: SHow ride action view for accepted trip")
+            }
         }
     }
     
@@ -87,7 +92,6 @@ class HomeController: UIViewController {
 
         guard let trip = trip else { return }
         
-        print("TRIP: \(trip.state)")
     }
     
     //MARK: - Actions
@@ -152,6 +156,16 @@ class HomeController: UIViewController {
     func observeTrips() {
         Service.shared.observeTrips { trip in
             self.trip = trip
+        }
+    }
+    
+    func observeCurrentTrip() {
+        Service.shared.observeCurrentTrip { trip in
+            self.trip = trip
+                        
+            if trip.state == .accepted {
+                self.shouldPresentLoadingView(false)
+            }
         }
     }
     
@@ -267,16 +281,19 @@ class HomeController: UIViewController {
         }, completion: completion)
     }
     
-    func animateRideActionView(shouldShow: Bool, destination: MKPlacemark? = nil) {
+    func animateRideActionView(shouldShow: Bool, destination: MKPlacemark? = nil, config: RideActionViewConfiguration? = nil) {
         let yOrigin = self.view.frame.height - (shouldShow ? self.rideActionViewHeight : 0)
-        
-        if shouldShow {
-            guard let destination = destination else { return }
-            self.rideActionView.destination = destination
-        }
         
         UIView.animate(withDuration: 0.3) {
             self.rideActionView.frame.origin.y = yOrigin
+        }
+        
+        if shouldShow {
+            guard let config = config else { return }
+            rideActionView.configureUI(withConfig: config)
+            
+            guard let destination = destination else { return }
+            self.rideActionView.destination = destination
         }
     }
     
@@ -477,8 +494,21 @@ extension HomeController: RideActionViewDelegate {
 extension HomeController: PickupControllerDelegate {
     
     func didAcceptTrip(_ trip: Trip) {
-        self.trip?.state = .accepted
-        self.dismiss(animated: true, completion: nil)
+
+        let annotation = MKPointAnnotation()
+        annotation.coordinate = trip.pickupCoordinates
+        mapView.addAnnotation(annotation)
+        mapView.selectAnnotation(annotation, animated: true)
+        
+        let placemark = MKPlacemark(coordinate: trip.pickupCoordinates)
+        let mapItem = MKMapItem(placemark: placemark)
+        generatePolyline(toDestionation: mapItem)
+
+        mapView.zoomToFit(annotations: mapView.annotations)
+                
+        self.dismiss(animated: true) {
+            self.animateRideActionView(shouldShow: true, config: .tripAccepted)
+        }
     }
     
 }

@@ -191,8 +191,8 @@ extension UIViewController {
             label.alpha = 0.9
             
             view.addSubview(loadingView)
-            view.addSubview(indicator)
-            view.addSubview(label)
+            loadingView.addSubview(indicator)
+            loadingView.addSubview(label)
             
             label.centerX(inView: view)
             label.anchor(top: indicator.bottomAnchor, paddingTop: 40)
@@ -203,7 +203,6 @@ extension UIViewController {
                 loadingView.alpha = 0.7
             }
         } else {
-            print("Why are we here")
             view.subviews.forEach { subview in
                 if subview.tag == 1 {
                     UIView.animate(withDuration: 0.3) {

@@ -93,17 +93,11 @@ struct Service {
             if let error = error {
                 print("Error observe trips: \(error.localizedDescription)")
             }
-            
             guard let documents = snapshot?.documents else { print("No documents"); return }
-            
             for document in documents {
                 let data = document.data()
-                
                 let trip = Trip(passengerUid: document.documentID, dictionary: data)
-                
                 completion(trip)
-                
-                
             }
         }
     }
@@ -113,6 +107,19 @@ struct Service {
         let values = ["driverUid": uid, "state": TripState.accepted.rawValue] as [String: Any]
         
         COLLECTION_TRIPS.document(trip.passengerUid).updateData(values, completion: completion)
+    }
+    
+    func observeCurrentTrip(completion: @escaping(Trip) -> Void) {
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        
+        COLLECTION_TRIPS.document(uid).addSnapshotListener { (snapshot, error) in
+            if let error = error {
+                print("Error observe trips: \(error.localizedDescription)")
+            }
+            guard let data = snapshot?.data() else { return }
+            let trip = Trip(passengerUid: uid, dictionary: data)
+            completion(trip)
+        }
     }
     
 }
