@@ -18,6 +18,8 @@ struct Service {
     
     static let shared = Service()
     
+    static var totalTripCount: Int = 0
+    
     func fetchUserData(uid: String, completion: @escaping(User) -> Void) {
         COLLECTION_USERS.document(uid).getDocument { (snapshot, error) in
             if let error = error {
@@ -88,17 +90,31 @@ struct Service {
         COLLECTION_TRIPS.document(uid).setData(values, completion: completion)
     }
     
-    func observeTrips(completion: @escaping(Trip) -> Void) {
+    //Looks for new incoming trips, deleted trips to handle, only on behalf of the driver
+    func observeTrips(completion: @escaping(Trip, Bool) -> Void) {
+        
         COLLECTION_TRIPS.addSnapshotListener { (snapshot, error) in
             if let error = error {
                 print("Error observe trips: \(error.localizedDescription)")
+                return
             }
-            guard let documents = snapshot?.documents else { print("No documents"); return }
-            for document in documents {
-                let data = document.data()
-                let trip = Trip(passengerUid: document.documentID, dictionary: data)
-                completion(trip)
+            
+            var tripRemoved: Bool = false
+            guard let documents = snapshot?.documents else { return }
+            guard let changedDocument = snapshot?.documentChanges.first?.document else { print("No change, yet observed?"); return }
+            let changedTrip = Trip(passengerUid: changedDocument.documentID, dictionary: changedDocument.data())
+              
+            if Service.totalTripCount == documents.count {
+                completion(changedTrip, tripRemoved)
+            } else if Service.totalTripCount > documents.count {
+                tripRemoved = true
+                if changedTrip.driverUid == Auth.auth().currentUser?.uid {
+                    completion(changedTrip, tripRemoved)
+                }
+            } else if Service.totalTripCount < documents.count {
+                completion(changedTrip, tripRemoved)
             }
+            Service.totalTripCount = documents.count
         }
     }
     
@@ -126,6 +142,19 @@ struct Service {
         guard let uid = Auth.auth().currentUser?.uid else { return }
         
         COLLECTION_TRIPS.document(uid).delete(completion: completion)
+    }
+    
+    
+    func getFirebaseTripCount(completion: @escaping(Int) -> Void) {
+        COLLECTION_TRIPS.getDocuments { (snapshot, error) in
+            if let error = error {
+                print("ERROR fetching all trips: \(error.localizedDescription)")
+                //TODO: Give error instead of completion to user
+                completion(0)
+                return
+            }
+            completion(snapshot?.documents.count ?? 0)
+        }
     }
     
 }

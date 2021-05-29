@@ -88,12 +88,6 @@ class HomeController: UIViewController {
         checkIfUserIsLoggedIn()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-
-        guard let trip = trip else { return }
-        
-    }
-    
     //MARK: - Actions
     
     @objc func actionButtonPressed() {
@@ -154,7 +148,13 @@ class HomeController: UIViewController {
     }
     
     func observeTrips() {
-        Service.shared.observeTrips { trip in
+        Service.shared.observeTrips { (trip, removed) in
+            
+            if removed {
+                self.removeAnnotationsAndOverlays()
+                self.animateRideActionView(shouldShow: false)
+                return
+            }
             self.trip = trip
         }
     }
@@ -522,7 +522,7 @@ extension HomeController: PickupControllerDelegate {
         generatePolyline(toDestionation: mapItem)
 
         mapView.zoomToFit(annotations: mapView.annotations)
-                
+        
         self.dismiss(animated: true) {
             Service.shared.fetchUserData(uid: trip.passengerUid) { passenger in
                 self.animateRideActionView(shouldShow: true, config: .tripAccepted, user: passenger)
