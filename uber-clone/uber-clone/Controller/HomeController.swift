@@ -153,6 +153,8 @@ class HomeController: UIViewController {
             if removed {
                 self.removeAnnotationsAndOverlays()
                 self.animateRideActionView(shouldShow: false)
+                self.centerMapOnUserLocation()
+                self.presentAlertController(withTitle: "Oops!", withMessage: "The passenger has canceled this trip")
                 return
             }
             self.trip = trip
@@ -356,11 +358,26 @@ private extension HomeController {
         }
     }
     
+    func centerMapOnUserLocation() {
+        guard let coordinate = locationManager.location?.coordinate else { return }
+        let region = MKCoordinateRegion(center: coordinate, latitudinalMeters: 2000, longitudinalMeters: 2000)
+        mapView.setRegion(region, animated: true)
+    }
+    
 }
 
 //MARK: - MKMapViewDelegate
 
 extension HomeController: MKMapViewDelegate {
+    
+    func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {
+        guard let userLocation = userLocation.location else { return }
+        guard let user = self.user else { return }
+        guard user.accountType == .driver else { return
+            
+        }
+        Service.shared.updateDriverLocation(location: userLocation)
+    }
     
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         if let annotation = annotation as? DriverAnnotation {
@@ -503,6 +520,11 @@ extension HomeController: RideActionViewDelegate {
                 return
             }
             self.animateRideActionView(shouldShow: false)
+            self.removeAnnotationsAndOverlays()
+            self.centerMapOnUserLocation()
+            
+            self.actionButton.setImage(#imageLiteral(resourceName: "baseline_menu_black_36dp").withRenderingMode(.alwaysOriginal), for: .normal)
+            self.actionButtonConfig = .showMenu
         }
     }
 }

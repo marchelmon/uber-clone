@@ -101,12 +101,10 @@ struct Service {
             
             var tripRemoved: Bool = false
             guard let documents = snapshot?.documents else { return }
-            guard let changedDocument = snapshot?.documentChanges.first?.document else { print("No change, yet observed?"); return }
+            guard let changedDocument = snapshot?.documentChanges.first?.document else { return }
             let changedTrip = Trip(passengerUid: changedDocument.documentID, dictionary: changedDocument.data())
               
-            if Service.totalTripCount == documents.count {
-                completion(changedTrip, tripRemoved)
-            } else if Service.totalTripCount > documents.count {
+            if Service.totalTripCount > documents.count {
                 tripRemoved = true
                 if changedTrip.driverUid == Auth.auth().currentUser?.uid {
                     completion(changedTrip, tripRemoved)
@@ -155,6 +153,23 @@ struct Service {
             }
             completion(snapshot?.documents.count ?? 0)
         }
+    }
+    
+    func updateDriverLocation(location: CLLocation) {
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        
+        let lat = location.coordinate.latitude
+        let lng = location.coordinate.longitude
+        
+        let hash = GFUtils.geoHash(forLocation: CLLocationCoordinate2D(latitude: lat, longitude: lng))
+                        
+        let locationData: [String: Any] = [
+            "geohash": hash,
+            "lat": lat,
+            "lng": lng
+        ]
+        COLLECTION_DRIVER_LOCATIONS.document(uid).updateData(locationData)
+        
     }
     
 }
