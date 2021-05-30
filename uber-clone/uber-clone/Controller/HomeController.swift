@@ -83,6 +83,7 @@ class HomeController: UIViewController {
         inputActivationView.delegate = self
         locationInputView.delegate = self
         rideActionView.delegate = self
+        locationManager.delegate = self
         
         enableLocationServices()
         checkIfUserIsLoggedIn()
@@ -364,6 +365,11 @@ private extension HomeController {
         mapView.setRegion(region, animated: true)
     }
     
+    func setCustomRegion(withCoordinates coordinates: CLLocationCoordinate2D) {
+        let region = CLCircularRegion(center: coordinates, radius: 80, identifier: "pickup")
+        locationManager.startMonitoring(for: region)
+    }
+    
 }
 
 //MARK: - MKMapViewDelegate
@@ -401,9 +407,17 @@ extension HomeController: MKMapViewDelegate {
     
 }
 
-//MARK: - LocationServices
+//MARK: - CLLocationManagerDelegate
 
-extension HomeController {
+extension HomeController: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager, didStartMonitoringFor region: CLRegion) {
+        print("DEBUG: Did start monitoring for region: \(region)")
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
+        print("DEBUG: DID ENTER REGION: \(region)")
+    }
+    
     func enableLocationServices() {
         switch CLLocationManager.authorizationStatus() {
         case .notDetermined:
@@ -522,6 +536,7 @@ extension HomeController: RideActionViewDelegate {
             self.animateRideActionView(shouldShow: false)
             self.removeAnnotationsAndOverlays()
             self.centerMapOnUserLocation()
+            self.inputActivationView.alpha = 1
             
             self.actionButton.setImage(#imageLiteral(resourceName: "baseline_menu_black_36dp").withRenderingMode(.alwaysOriginal), for: .normal)
             self.actionButtonConfig = .showMenu
@@ -538,6 +553,8 @@ extension HomeController: PickupControllerDelegate {
         annotation.coordinate = trip.pickupCoordinates
         mapView.addAnnotation(annotation)
         mapView.selectAnnotation(annotation, animated: true)
+        
+        setCustomRegion(withCoordinates: trip.pickupCoordinates)
         
         let placemark = MKPlacemark(coordinate: trip.pickupCoordinates)
         let mapItem = MKMapItem(placemark: placemark)
