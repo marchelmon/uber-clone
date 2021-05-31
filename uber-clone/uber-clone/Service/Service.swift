@@ -169,7 +169,10 @@ struct Service {
             "lng": lng
         ]
         COLLECTION_DRIVER_LOCATIONS.document(uid).updateData(locationData)
-        
+    }
+    
+    func updateTripState(trip: Trip, state: TripState) {
+        COLLECTION_TRIPS.document(trip.passengerUid).updateData(["state": state.rawValue])
     }
     
 }
