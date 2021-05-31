@@ -172,6 +172,22 @@ class HomeController: UIViewController {
                 print("Requested ")
             case .accepted:
                 self.shouldPresentLoadingView(false)
+                self.removeAnnotationsAndOverlays()
+                var annotations = [MKAnnotation]()
+                
+                self.mapView.annotations.forEach { annotation in
+                    if let anno = annotation as? DriverAnnotation {
+                        if anno.uid == trip.driverUid {
+                            annotations.append(anno)
+                        }
+                    }
+                    
+                    if let userAnno = annotation as? MKUserLocation {
+                        annotations.append(userAnno)
+                    }
+                }
+                print("ANNOTATIONS ARRAY: \(annotations)")
+                self.mapView.zoomToFit(annotations: annotations)
                 
                 Service.shared.fetchUserData(uid: driverUid) { driver in
                     self.animateRideActionView(shouldShow: true, config: .tripAccepted, user: driver)
