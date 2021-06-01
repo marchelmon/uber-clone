@@ -168,6 +168,13 @@ extension MKMapView {
         }
     }
     
+    func addAnnotationAndSelect(forCoordinate coordinate: CLLocationCoordinate2D) {
+        let annotation = MKPointAnnotation()
+        annotation.coordinate = coordinate
+        addAnnotation(annotation)
+        selectAnnotation(annotation, animated: true)
+    }
+    
 }
 
 extension UIViewController {

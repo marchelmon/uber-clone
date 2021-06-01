@@ -52,10 +52,7 @@ struct Service {
                     print("ERROR: \(error.localizedDescription)")
                     return
                 }
-                guard let documents = snapshot?.documents else {
-                    print("Unable to fetch snapshot data. \(String(describing: error))")
-                    return
-                }
+                guard let documents = snapshot?.documents else { return }
                 for document in documents {
                     let lat = document.data()["lat"] as? Double ?? 0
                     let lng = document.data()["lng"] as? Double ?? 0
@@ -171,8 +168,8 @@ struct Service {
         COLLECTION_DRIVER_LOCATIONS.document(uid).updateData(locationData)
     }
     
-    func updateTripState(trip: Trip, state: TripState) {
-        COLLECTION_TRIPS.document(trip.passengerUid).updateData(["state": state.rawValue])
+    func updateTripState(trip: Trip, state: TripState, completion: @escaping(Error?) -> Void) {
+        COLLECTION_TRIPS.document(trip.passengerUid).updateData(["state": state.rawValue], completion: completion)
     }
     
 }

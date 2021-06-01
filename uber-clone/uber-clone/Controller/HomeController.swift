@@ -19,7 +19,11 @@ private enum ActionButtonConfig {
     init() {
         self = .showMenu
     }
-    
+}
+
+private enum AnnotationType: String {
+    case pickup
+    case destination
 }
 
 class HomeController: UIViewController {
@@ -111,6 +115,22 @@ class HomeController: UIViewController {
     
     //MARK: - API
     
+    func startTrip() {
+        guard let trip = self.trip else { return }
+        Service.shared.updateTripState(trip: trip, state: .inProgress) { error in
+            self.rideActionView.config = .tripInProgress
+            self.removeAnnotationsAndOverlays()
+
+            self.mapView.addAnnotationAndSelect(forCoordinate: trip.destinationCoordinates)
+
+            let placemark = MKPlacemark(coordinate: trip.destinationCoordinates)
+            let mapItem = MKMapItem(placemark: placemark)
+            self.generatePolyline(toDestionation: mapItem)
+            
+            self.setCustomRegion(withType: .destination, withCoordinates: trip.destinationCoordinates)
+        }
+    }
+    
     func fetchUserData() {
         guard let uid = Auth.auth().currentUser?.uid else { return }
         Service.shared.fetchUserData(uid: uid) { user in
@@ -129,6 +149,7 @@ class HomeController: UIViewController {
                     guard let driverAnnotation = annotation as? DriverAnnotation else { return false }
                     if driverAnnotation.uid == driver.uid {
                         driverAnnotation.updateAnnotationPosition(withCoordinate: coordinate)
+                        self.zoomForActiveTrip(withDriverUid: driver.uid)
                         return true
                     }
                     return false
@@ -173,29 +194,17 @@ class HomeController: UIViewController {
             case .accepted:
                 self.shouldPresentLoadingView(false)
                 self.removeAnnotationsAndOverlays()
-                var annotations = [MKAnnotation]()
-                
-                self.mapView.annotations.forEach { annotation in
-                    if let anno = annotation as? DriverAnnotation {
-                        if anno.uid == trip.driverUid {
-                            annotations.append(anno)
-                        }
-                    }
-                    
-                    if let userAnno = annotation as? MKUserLocation {
-                        annotations.append(userAnno)
-                    }
-                }
-                print("ANNOTATIONS ARRAY: \(annotations)")
-                self.mapView.zoomToFit(annotations: annotations)
+                self.zoomForActiveTrip(withDriverUid: driverUid)
                 
                 Service.shared.fetchUserData(uid: driverUid) { driver in
                     self.animateRideActionView(shouldShow: true, config: .tripAccepted, user: driver)
                 }
             case .driverArrived:
                 self.rideActionView.config = .driverArrived
-            case .progressing:
-                print("progressing")
+            case .inProgress:
+                self.rideActionView.config = .tripInProgress
+            case .arrivedAtDestination:
+                self.rideActionView.config = .endTrip
             case .completed:
                 print("completed")
             }
@@ -390,9 +399,26 @@ private extension HomeController {
         mapView.setRegion(region, animated: true)
     }
     
-    func setCustomRegion(withCoordinates coordinates: CLLocationCoordinate2D) {
-        let region = CLCircularRegion(center: coordinates, radius: 80, identifier: "pickup")
+    func setCustomRegion(withType type: AnnotationType, withCoordinates coordinates: CLLocationCoordinate2D) {
+        let region = CLCircularRegion(center: coordinates, radius: 80, identifier: type.rawValue)
         locationManager.startMonitoring(for: region)
+    }
+    
+    func zoomForActiveTrip(withDriverUid uid: String) {
+        var annotations = [MKAnnotation]()
+        
+        self.mapView.annotations.forEach { annotation in
+            if let anno = annotation as? DriverAnnotation {
+                if anno.uid == uid {
+                    annotations.append(anno)
+                }
+            }
+            
+            if let userAnno = annotation as? MKUserLocation {
+                annotations.append(userAnno)
+            }
+        }
+        self.mapView.zoomToFit(annotations: annotations)
     }
     
 }
@@ -436,16 +462,29 @@ extension HomeController: MKMapViewDelegate {
 
 extension HomeController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didStartMonitoringFor region: CLRegion) {
-        print("DEBUG: Did start monitoring for region: \(region)")
+        if region.identifier == AnnotationType.pickup.rawValue {
+            print("Did start monitoring PICKUP region: \(region)")
+        } else if region.identifier == AnnotationType.destination.rawValue {
+            print("Did start monitoring DESTINATION region: \(region)")
+
+        }
     }
     
     func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
-        print("DEBUG: DID ENTER REGION: \(region)")
-        
-        self.rideActionView.config = .pickupPassenger
-        
         guard let trip = self.trip else { return }
-        Service.shared.updateTripState(trip: trip, state: .driverArrived)
+        
+        if region.identifier == AnnotationType.pickup.rawValue {
+            print("Did enter PICKUP region: \(region)")
+            Service.shared.updateTripState(trip: trip, state: .driverArrived) { error in
+                self.rideActionView.config = .pickupPassenger
+            }
+        } else if region.identifier == AnnotationType.destination.rawValue {
+            print("Did enter DESTINATION region: \(region)")
+            Service.shared.updateTripState(trip: trip, state: .arrivedAtDestination) { error in
+                self.rideActionView.config = .endTrip
+            }
+        }
+
     }
     
     func enableLocationServices() {
@@ -523,15 +562,9 @@ extension HomeController: UITableViewDelegate, UITableViewDataSource {
         generatePolyline(toDestionation: destination)
         
         dismissLocationView { _ in
-            let annotation = MKPointAnnotation()
-            annotation.coordinate = selectedPlacemark.coordinate
-            self.mapView.addAnnotation(annotation)
-            self.mapView.selectAnnotation(annotation, animated: true)
-         
+            self.mapView.addAnnotationAndSelect(forCoordinate: selectedPlacemark.coordinate)
             let annotations = self.mapView.annotations.filter({ !$0.isKind(of: DriverAnnotation.self) })
-            
             self.mapView.zoomToFit(annotations: annotations)
-            
             self.animateRideActionView(shouldShow: true, destination: selectedPlacemark, config: .requestRide)
             
         }
@@ -572,6 +605,9 @@ extension HomeController: RideActionViewDelegate {
             self.actionButtonConfig = .showMenu
         }
     }
+    func pickupPassenger() {
+        startTrip()
+    }
 }
 
 //MARK: - PickupControllerDelegate
@@ -580,12 +616,9 @@ extension HomeController: PickupControllerDelegate {
     
     func didAcceptTrip(_ trip: Trip) {
         self.trip = trip
-        let annotation = MKPointAnnotation()
-        annotation.coordinate = trip.pickupCoordinates
-        mapView.addAnnotation(annotation)
-        mapView.selectAnnotation(annotation, animated: true)
         
-        setCustomRegion(withCoordinates: trip.pickupCoordinates)
+        mapView.addAnnotationAndSelect(forCoordinate: trip.pickupCoordinates)
+        setCustomRegion(withType: .pickup, withCoordinates: trip.pickupCoordinates)
         
         let placemark = MKPlacemark(coordinate: trip.pickupCoordinates)
         let mapItem = MKMapItem(placemark: placemark)
