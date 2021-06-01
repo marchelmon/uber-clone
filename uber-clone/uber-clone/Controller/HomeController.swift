@@ -128,6 +128,7 @@ class HomeController: UIViewController {
             self.generatePolyline(toDestionation: mapItem)
             
             self.setCustomRegion(withType: .destination, withCoordinates: trip.destinationCoordinates)
+            self.mapView.zoomToFit(annotations: self.mapView.annotations)
         }
     }
     
@@ -171,12 +172,13 @@ class HomeController: UIViewController {
     
     func observeTrips() {
         Service.shared.observeTrips { (trip, removed) in
-            
             if removed {
                 self.removeAnnotationsAndOverlays()
                 self.animateRideActionView(shouldShow: false)
                 self.centerMapOnUserLocation()
-                self.presentAlertController(withTitle: "Oops!", withMessage: "The passenger has canceled this trip")
+                if trip.state != .completed {
+                    self.presentAlertController(withTitle: "Oops!", withMessage: "The passenger has canceled this trip")
+                }
                 return
             }
             self.trip = trip
@@ -206,7 +208,14 @@ class HomeController: UIViewController {
             case .arrivedAtDestination:
                 self.rideActionView.config = .endTrip
             case .completed:
-                print("completed")
+                Service.shared.deleteTrip { error in
+                    self.animateRideActionView(shouldShow: false)
+                    self.centerMapOnUserLocation()
+                    self.configureActionButton(config: .showMenu)
+                    self.presentAlertController(withTitle: "Trip completed", withMessage: "Hope you enjoyed your trip")
+                    self.inputActivationView.alpha = 1
+                    
+                }
             }
         }
     }
@@ -591,7 +600,7 @@ extension HomeController: RideActionViewDelegate {
         }
     }
     func cancelTrip() {
-        Service.shared.cancelTrip { error in
+        Service.shared.deleteTrip { error in
             if let error = error {
                 print("Deleting trip failed: \(error.localizedDescription)")
                 return
@@ -600,13 +609,25 @@ extension HomeController: RideActionViewDelegate {
             self.removeAnnotationsAndOverlays()
             self.centerMapOnUserLocation()
             self.inputActivationView.alpha = 1
-            
-            self.actionButton.setImage(#imageLiteral(resourceName: "baseline_menu_black_36dp").withRenderingMode(.alwaysOriginal), for: .normal)
-            self.actionButtonConfig = .showMenu
+            self.configureActionButton(config: .showMenu)
         }
     }
     func pickupPassenger() {
         startTrip()
+    }
+    func dropOffPassenger() {
+        guard let trip = trip else { return }
+        Service.shared.updateTripState(trip: trip, state: .completed) { error in
+            self.removeAnnotationsAndOverlays()
+            self.centerMapOnUserLocation()
+            self.animateRideActionView(shouldShow: false)
+        }
+    }
+    func presentDirections() {
+        guard let trip = trip else { return }
+        let destinationString = "Destination: \(trip.destinationCoordinates.latitude), \(trip.destinationCoordinates.longitude)"
+        let pickupString = "Pickup: \(trip.pickupCoordinates.latitude), \(trip.pickupCoordinates.longitude)"
+        presentAlertController(withTitle: destinationString, withMessage: pickupString)
     }
 }
 
