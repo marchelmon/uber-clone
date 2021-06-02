@@ -21,7 +21,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         Service.shared.getFirebaseTripCount { tripCount in
             Service.totalTripCount = tripCount
-            self.window?.rootViewController = HomeController()
+            self.window?.rootViewController = ContainerController()
         }
     }
 
