@@ -50,7 +50,7 @@ class HomeController: UIViewController {
     
     weak var delegate: HomeControllerDelegate?
     
-    private var user: User? {
+    var user: User? {
         didSet {
             locationInputView.user = user
             if user?.accountType == .passenger {
@@ -90,13 +90,14 @@ class HomeController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        configureUI()
+        
         inputActivationView.delegate = self
         locationInputView.delegate = self
         rideActionView.delegate = self
         locationManager.delegate = self
         
         enableLocationServices()
-        checkIfUserIsLoggedIn()
     }
     
     //MARK: - Actions
@@ -212,32 +213,7 @@ class HomeController: UIViewController {
             self.trip = trip
         }
     }
-    
-    //MARK: - Shared API
-    
-    func checkIfUserIsLoggedIn() {
-        if Auth.auth().currentUser == nil {
-            presentLoginController()
-        } else {
-            configure()
-        }
-    }
-    
-    func fetchUserData() {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        Service.shared.fetchUserData(uid: uid) { user in
-            self.user = user
-        }
-    }
-    
-    func signOut() {
-        do {
-            try Auth.auth().signOut()
-            presentLoginController()
-        } catch {
-            print("DEBUG: ERROR logging out")
-        }
-    }
+        
     
     //MARK: - Helpers
     
@@ -247,11 +223,6 @@ class HomeController: UIViewController {
             controller.modalPresentationStyle = .fullScreen
             self.present(controller, animated: true, completion: nil)
         }
-    }
-    
-    func configure() {
-        configureUI()
-        fetchUserData()
     }
     
     func configureUI() {

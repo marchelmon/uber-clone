@@ -9,19 +9,51 @@ import UIKit
 
 private let menuCellIdentifier = "MenuCell"
 
+enum MenuOptions: Int, CaseIterable, CustomStringConvertible {
+    case yourTrips
+    case settings
+    case logout
+        
+    var description: String {
+        switch self {
+        case .yourTrips: return "Your trips"
+        case .settings: return "Settings"
+        case .logout: return "Logout"
+        }
+    }
+}
+
+protocol MenuControllerDelegate: class {
+    func didSelect(option: MenuOptions)
+}
+
 class MenuController: UIViewController {
     
     //MARK: - Properties
     
+    private let user: User
+    
+    weak var delegate: MenuControllerDelegate?
+    
     private let tableView = UITableView()
     
     private lazy var menuHeader: MenuHeader = {
-        let view = MenuHeader(frame: CGRect(x: 0, y: 0, width: self.view.frame.width - 80, height: 140))
+        let frame = CGRect(x: 0, y: 0, width: self.view.frame.width - 80, height: 200)
+        let view = MenuHeader(user: self.user, frame: frame)
         
         return view
     } ()
     
     //MARK: - Lifecycle
+    
+    init(user: User) {
+        self.user = user
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -57,14 +89,25 @@ class MenuController: UIViewController {
 
 extension MenuController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        3
+        return MenuOptions.allCases.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: menuCellIdentifier, for: indexPath)
-        cell.textLabel?.text = "Menu Option"
-        return cell
-    }
+        
+        guard let option = MenuOptions(rawValue: indexPath.row) else { return UITableViewCell() }
+        cell.textLabel?.text = option.description
 
+        return cell
+        
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let option = MenuOptions(rawValue: indexPath.row) else { return }
+        
+        print("Option is : \(option.description)")
+        delegate?.didSelect(option: option)
+    }
+    
 }
 
