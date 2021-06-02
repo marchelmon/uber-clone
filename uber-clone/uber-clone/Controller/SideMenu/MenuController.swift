@@ -104,8 +104,6 @@ extension MenuController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let option = MenuOptions(rawValue: indexPath.row) else { return }
-        
-        print("Option is : \(option.description)")
         delegate?.didSelect(option: option)
     }
     
