@@ -19,7 +19,7 @@ class LocationCell: UITableViewCell {
         }
     }
     
-    private let titleLabel: UILabel = {
+    let titleLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14)
         return label
@@ -32,6 +32,13 @@ class LocationCell: UITableViewCell {
         label.numberOfLines = 2
         return label
     }()
+    
+    var locationType: LocationType? {
+        didSet {
+            titleLabel.text = locationType?.description
+            addressLabel.text = locationType?.subtitle
+        }
+    }
     
     //MARK: - Lifecycle
     

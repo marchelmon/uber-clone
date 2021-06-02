@@ -12,6 +12,9 @@
 		3C2843CC2666BFC600B351BE /* MenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2843CB2666BFC600B351BE /* MenuController.swift */; };
 		3C2843CF2666BFDE00B351BE /* ContainerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2843CE2666BFDE00B351BE /* ContainerController.swift */; };
 		3C2843D326675F2B00B351BE /* MenuHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2843D226675F2B00B351BE /* MenuHeader.swift */; };
+		3C2843D62667CF5200B351BE /* SettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2843D52667CF5200B351BE /* SettingsController.swift */; };
+		3C2843D92667D3DB00B351BE /* UserInfoHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2843D82667D3DB00B351BE /* UserInfoHeader.swift */; };
+		3C2843DD266808AD00B351BE /* AddLocationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2843DC266808AD00B351BE /* AddLocationController.swift */; };
 		3C579763264AAB5A009371C8 /* LocationInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C579762264AAB5A009371C8 /* LocationInputView.swift */; };
 		3C579766264BBB90009371C8 /* LocationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C579765264BBB90009371C8 /* LocationCell.swift */; };
 		3C579769264BC787009371C8 /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C579768264BC787009371C8 /* Service.swift */; };
@@ -40,6 +43,9 @@
 		3C2843CB2666BFC600B351BE /* MenuController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuController.swift; sourceTree = "<group>"; };
 		3C2843CE2666BFDE00B351BE /* ContainerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerController.swift; sourceTree = "<group>"; };
 		3C2843D226675F2B00B351BE /* MenuHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuHeader.swift; sourceTree = "<group>"; };
+		3C2843D52667CF5200B351BE /* SettingsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsController.swift; sourceTree = "<group>"; };
+		3C2843D82667D3DB00B351BE /* UserInfoHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoHeader.swift; sourceTree = "<group>"; };
+		3C2843DC266808AD00B351BE /* AddLocationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddLocationController.swift; sourceTree = "<group>"; };
 		3C579762264AAB5A009371C8 /* LocationInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationInputView.swift; sourceTree = "<group>"; };
 		3C579765264BBB90009371C8 /* LocationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationCell.swift; sourceTree = "<group>"; };
 		3C579768264BC787009371C8 /* Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
@@ -94,6 +100,15 @@
 				3C2843CE2666BFDE00B351BE /* ContainerController.swift */,
 			);
 			path = SideMenu;
+			sourceTree = "<group>";
+		};
+		3C2843DB2668089300B351BE /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				3C2843D52667CF5200B351BE /* SettingsController.swift */,
+				3C2843DC266808AD00B351BE /* AddLocationController.swift */,
+			);
+			path = Settings;
 			sourceTree = "<group>";
 		};
 		3CB20D1D2643F77C006D869A = {
@@ -153,6 +168,7 @@
 		3CB20D402643F84C006D869A /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				3C2843DB2668089300B351BE /* Settings */,
 				3C2843CA2666BFB500B351BE /* SideMenu */,
 				3C2843C92666BF9A00B351BE /* Authentication */,
 				3C0C5BC126481E9D006FEB20 /* HomeController.swift */,
@@ -170,6 +186,7 @@
 				3C579765264BBB90009371C8 /* LocationCell.swift */,
 				3C5797A426599625009371C8 /* RideActionView.swift */,
 				3C2843D226675F2B00B351BE /* MenuHeader.swift */,
+				3C2843D82667D3DB00B351BE /* UserInfoHeader.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -319,12 +336,15 @@
 				3CB20D2A2643F77C006D869A /* AppDelegate.swift in Sources */,
 				3CB20D522645664C006D869A /* AuthButton.swift in Sources */,
 				3C0C5BC226481E9D006FEB20 /* HomeController.swift in Sources */,
+				3C2843D92667D3DB00B351BE /* UserInfoHeader.swift in Sources */,
+				3C2843D62667CF5200B351BE /* SettingsController.swift in Sources */,
 				3C579763264AAB5A009371C8 /* LocationInputView.swift in Sources */,
 				3C5797A8265E2BE6009371C8 /* Trip.swift in Sources */,
 				3C5797AB265EE14E009371C8 /* PickupController.swift in Sources */,
 				3C5797A2264FB997009371C8 /* DriverAnnotation.swift in Sources */,
 				3CB20D452643F8F8006D869A /* LoginController.swift in Sources */,
 				3CB20D2C2643F77C006D869A /* SceneDelegate.swift in Sources */,
+				3C2843DD266808AD00B351BE /* AddLocationController.swift in Sources */,
 				3C579766264BBB90009371C8 /* LocationCell.swift in Sources */,
 				3C2843CC2666BFC600B351BE /* MenuController.swift in Sources */,
 				3C579787264D7095009371C8 /* LocationHandler.swift in Sources */,

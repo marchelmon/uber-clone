@@ -1,5 +1,5 @@
 //
-//  MenuHeader.swift
+//  UserInfoHeader.swift
 //  uber-clone
 //
 //  Created by marchelmon on 2021-06-02.
@@ -7,10 +7,10 @@
 
 import UIKit
 
-class MenuHeader: UIView {
+class UserInfoHeader: UIView {
     
     //MARK: - Properties
-
+    
     private let user: User
     
     private let profileImageView: UIImageView = {
@@ -23,7 +23,6 @@ class MenuHeader: UIView {
     private lazy var fullnameLabel: UILabel = {
         let label = UILabel()
         label.text = user.fullname
-        label.textColor = .white
         label.font = UIFont.systemFont(ofSize: 16)
         return label
     }()
@@ -37,14 +36,18 @@ class MenuHeader: UIView {
         return label
     }()
     
+    
     //MARK: - Lifecycle
     
     init(user: User, frame: CGRect) {
         self.user = user
         super.init(frame: frame)
+        
+        backgroundColor = .white
 
         addSubview(profileImageView)
-        profileImageView.anchor(top: safeAreaLayoutGuide.topAnchor, left: leftAnchor, paddingTop: 10, paddingLeft: 12, width: 64, height: 64)
+        profileImageView.centerY(inView: self, leftAnchor: leftAnchor, paddingLeft: 16)
+        profileImageView.setDimensions(width: 64, height: 64)
         
         let stack = UIStackView(arrangedSubviews: [fullnameLabel, emailLabel])
         stack.distribution = .fillEqually
@@ -53,16 +56,10 @@ class MenuHeader: UIView {
         addSubview(stack)
         stack.centerY(inView: profileImageView, leftAnchor: profileImageView.rightAnchor, paddingLeft: 12)
         
-        backgroundColor = .backgroundColor
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    //MARK: - Actions
-
-    
-    //MARK: - Helpers
     
 }
