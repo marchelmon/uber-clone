@@ -35,18 +35,21 @@ class HomeController: UIViewController {
     //MARK: - Properties
     
     private let mapView = MKMapView()
-    
     private let locationManager: CLLocationManager = LocationHandler.shared.locationManager
+    private var route: MKRoute?
     
     private let inputActivationView = LocationInputActivationView()
     private let rideActionView = RideActionView()
     private let locationInputView = LocationInputView()
     private let tableView = UITableView()
+    
     private var searchResults = [MKPlacemark]()
+    private var favoriteLocations = [MKPlacemark]()
+    
     private final let locationInputViewHeight: CGFloat = 200
     private final let rideActionViewHeight: CGFloat = 300
+    
     private var actionButtonConfig = ActionButtonConfig()
-    private var route: MKRoute?
     
     weak var delegate: HomeControllerDelegate?
     
@@ -57,6 +60,7 @@ class HomeController: UIViewController {
                 fetchDrivers()
                 configureInputActivationView()
                 observeCurrentTrip()
+                configureFavoriteLocations()
             } else {
                 observeTrips()
             }
@@ -216,6 +220,27 @@ class HomeController: UIViewController {
         
     
     //MARK: - Helpers
+    
+    func configureFavoriteLocations() {
+        guard let user = user else { return }
+        if let home = user.home {
+            geocodeAddressString(address: home)
+        }
+        
+        if let work = user.work {
+            geocodeAddressString(address: work)
+        }
+    }
+    
+    func geocodeAddressString(address: String) {
+        let geocoder = CLGeocoder()
+        geocoder.geocodeAddressString(address) { (placemarks, error) in
+            guard let clPlacemark = placemarks?.first else { return }
+            let placemark = MKPlacemark(placemark: clPlacemark)
+            self.favoriteLocations.append(placemark)
+            self.tableView.reloadData()
+        }
+    }
     
     func presentLoginController() {
         DispatchQueue.main.async {
@@ -521,7 +546,7 @@ extension HomeController: LocationInputViewDelegate {
 
 extension HomeController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return "test"
+        return section == 0 ? "Favorite Locations" : "Results"
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -529,11 +554,16 @@ extension HomeController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return section == 0 ? 2 : searchResults.count
+        return section == 0 ? favoriteLocations.count : searchResults.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier) as! LocationCell
+        
+        if indexPath.section == 0 {
+            cell.placemark = favoriteLocations[indexPath.row]
+            
+        }
         
         if indexPath.section == 1 {
             cell.placemark = searchResults[indexPath.row]
@@ -543,7 +573,8 @@ extension HomeController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let selectedPlacemark = self.searchResults[indexPath.row]
+        
+        let selectedPlacemark = indexPath.section == 0 ? self.favoriteLocations[indexPath.row]: self.searchResults[indexPath.row]
         
         configureActionButton(config: .dismissActionView)
         
