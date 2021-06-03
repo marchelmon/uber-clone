@@ -15,12 +15,12 @@ class ContainerController: UIViewController {
     var user: User? {
         didSet {
             guard let user = user else { return }
-            homeController.user = user
+            configureHomeController(withUser: user)
             configureMenuController(withUser: user)
         }
     }
     
-    private let homeController = HomeController()
+    private var homeController: HomeController!
     private var menuController: MenuController!
         
     var menuIsExpanded: Bool = false
@@ -31,9 +31,7 @@ class ContainerController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
         checkIfUserIsLoggedIn()
-        
     }
     
     override var prefersStatusBarHidden: Bool {
@@ -73,11 +71,18 @@ class ContainerController: UIViewController {
         if Auth.auth().currentUser == nil {
             homeController.presentLoginController()
         } else {
-            configure()
+            fetchUserData()
         }
     }
     
     //MARK: - Helpers
+    
+    func configure() {
+        view.subviews.forEach { subview in
+            subview.removeFromSuperview()
+        }
+        fetchUserData()
+    }
     
     func configureBlackView() {
         blackView.frame = self.view.bounds
@@ -90,12 +95,9 @@ class ContainerController: UIViewController {
         blackView.addGestureRecognizer(tap)
     }
     
-    func configure() {
-        configureHomeController()
-        fetchUserData()
-    }
-    
-    func configureHomeController() {
+    func configureHomeController(withUser user: User) {
+        homeController = HomeController()
+        homeController.user = user
         addChild(homeController)
         homeController.didMove(toParent: self)
         view.addSubview(homeController.view)

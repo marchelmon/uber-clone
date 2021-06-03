@@ -11,7 +11,7 @@ import Firebase
 class LoginController: UIViewController {
     
     //MARK: - Properties
-    
+        
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "UBER"

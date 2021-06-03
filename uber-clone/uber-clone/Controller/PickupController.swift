@@ -21,6 +21,17 @@ class PickupController: UIViewController {
     private let mapView = MKMapView()
     let trip: Trip
     
+    private lazy var circularProgressView:CircularProgressView = {
+        let frame = CGRect(x: 0, y: 0, width: 360, height: 360)
+        let cp = CircularProgressView(frame: frame)
+        cp.addSubview(mapView)
+        mapView.setDimensions(width: 268, height: 268)
+        mapView.layer.cornerRadius = 268 / 2
+        mapView.centerX(inView: cp)
+        mapView.centerY(inView: cp)
+        return cp
+    }()
+    
     private let cancelButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(#imageLiteral(resourceName: "baseline_clear_white_36pt_2x").withRenderingMode(.alwaysOriginal), for: .normal)
@@ -93,14 +104,11 @@ class PickupController: UIViewController {
         view.addSubview(cancelButton)
         cancelButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, paddingLeft: 16)
         
-        view.addSubview(mapView)
-        mapView.setDimensions(width: 270, height: 270)
-        mapView.layer.cornerRadius = 270 / 2
-        mapView.centerX(inView: view)
-        mapView.centerY(inView: view, constant: -120)
+        view.addSubview(circularProgressView)
+        circularProgressView.centerX(inView: view)
         
         view.addSubview(pickupLabel)
-        pickupLabel.anchor(top: mapView.bottomAnchor, paddingTop: 25)
+        pickupLabel.anchor(top: circularProgressView.bottomAnchor, paddingTop: 32)
         pickupLabel.centerX(inView: view)
         
         view.addSubview(acceptTripButton)

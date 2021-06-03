@@ -223,10 +223,11 @@ class HomeController: UIViewController {
     
     func configureFavoriteLocations() {
         guard let user = user else { return }
+        favoriteLocations.removeAll()
+        
         if let home = user.home {
             geocodeAddressString(address: home)
         }
-        
         if let work = user.work {
             geocodeAddressString(address: work)
         }
@@ -574,7 +575,7 @@ extension HomeController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        let selectedPlacemark = indexPath.section == 0 ? self.favoriteLocations[indexPath.row]: self.searchResults[indexPath.row]
+        let selectedPlacemark = indexPath.section == 0 ? favoriteLocations[indexPath.row]: searchResults[indexPath.row]
         
         configureActionButton(config: .dismissActionView)
         
