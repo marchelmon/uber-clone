@@ -19,16 +19,19 @@ struct User {
     let email: String
     var accountType: AccountType!
     var location: CLLocation?
+    var home: String?
+    var work: String?
 
     init(uid: String, data: [String: Any]) {
         self.uid = uid
         fullname = data["fullname"] as? String ?? "John Doe"
         email = data["email"] as? String ?? "John Doe"
+        home = data["home"] as? String
+        work = data["work"] as? String
         
         if let index = data["accountType"] as? Int {
             self.accountType = AccountType(rawValue: index)
         }
-        
     }
     
     

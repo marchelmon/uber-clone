@@ -25,20 +25,13 @@ class LocationCell: UITableViewCell {
         return label
     }()
     
-    private let addressLabel: UILabel = {
+    let addressLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14)
         label.textColor = .lightGray
         label.numberOfLines = 2
         return label
     }()
-    
-    var locationType: LocationType? {
-        didSet {
-            titleLabel.text = locationType?.description
-            addressLabel.text = locationType?.subtitle
-        }
-    }
     
     //MARK: - Lifecycle
     

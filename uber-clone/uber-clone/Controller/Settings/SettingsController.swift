@@ -28,11 +28,19 @@ enum LocationType: Int, CaseIterable, CustomStringConvertible {
     }
 }
 
+protocol SettingsControllerDelegate: class {
+    func updateUser(_ controller: SettingsController)
+}
+
 class SettingsController: UITableViewController {
     
     //MARK: - Properties
     
-    private let user: User
+    var user: User
+    
+    weak var delegate: SettingsControllerDelegate?
+    
+    private var userInfoUpdated: Bool = false
     
     private let locationManager = LocationHandler.shared.locationManager
     
@@ -64,10 +72,23 @@ class SettingsController: UITableViewController {
     //MARK: - Actions
     
     @objc func handleDismiss() {
+        if userInfoUpdated {
+            self.delegate?.updateUser(self)
+            userInfoUpdated = false
+        }
         dismiss(animated: true, completion: nil)
     }
     
     //MARK: - Helpers
+    
+    func locationText(forType type: LocationType) -> String{
+        switch type {
+        case .home:
+            return user.home ?? type.subtitle
+        case .work:
+            return user.work ?? type.subtitle
+        }
+    }
     
     func configureTableView() {
         tableView.rowHeight = 60
@@ -117,7 +138,8 @@ extension SettingsController {
         let cell = tableView.dequeueReusableCell(withIdentifier: locationCellIdentifier) as! LocationCell
         
         guard let locationType = LocationType(rawValue: indexPath.row) else { return cell }
-        cell.locationType = locationType
+        cell.titleLabel.text = locationType.description
+        cell.addressLabel.text = locationText(forType: locationType)
         return cell
     }
     
@@ -125,8 +147,31 @@ extension SettingsController {
         guard let locationType = LocationType(rawValue: indexPath.row) else { return }
         guard let location = locationManager?.location else { return }
         let controller = AddLocationController(locationType: locationType, location: location)
+        controller.delegate = self
         let nav = UINavigationController(rootViewController: controller)
         present(nav, animated: true, completion: nil)
     }
     
 }
+
+extension SettingsController: AddLocationControllerDelegate {
+    func updateFavoriteLocation(locationString: String, locationType: LocationType) {
+        PassengerService.shared.saveFavoriteLocation(locationString: locationString, locationType: locationType) { error in
+            self.dismiss(animated: true, completion: nil)
+            self.userInfoUpdated = true
+            
+            switch locationType {
+            case .home:
+                self.user.home = locationString
+            case .work:
+                self.user.work = locationString
+            }
+            self.tableView.reloadData()
+        }
+    }
+}
+
+
+
+
+

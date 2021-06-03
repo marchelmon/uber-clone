@@ -145,6 +145,13 @@ struct PassengerService {
         COLLECTION_TRIPS.document(uid).delete(completion: completion)
     }
     
+    func saveFavoriteLocation(locationString: String, locationType: LocationType, completion: ((Error?) -> Void)?) {
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        let key: String = locationType == .home ? "home" : "work"
+        
+        COLLECTION_USERS.document(uid).updateData([key: locationString], completion: completion)
+    }
+    
 }
 
 struct Service {

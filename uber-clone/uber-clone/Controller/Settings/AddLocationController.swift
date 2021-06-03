@@ -10,9 +10,15 @@ import MapKit
 
 private let cellIdentifier = "Cell"
 
+protocol AddLocationControllerDelegate: class {
+    func updateFavoriteLocation(locationString: String, locationType: LocationType)
+}
+
 class AddLocationController: UITableViewController {
     
     //MARK: - Properties
+    
+    weak var delegate: AddLocationControllerDelegate?
     
     private let searchBar = UISearchBar()
     private let searchCompleter = MKLocalSearchCompleter()
@@ -83,6 +89,12 @@ extension AddLocationController {
         cell.textLabel?.text = result.title
         cell.detailTextLabel?.text = result.subtitle
         return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let result = searchResults[indexPath.row]
+        let locationString = "\(result.title) \(result.subtitle)"
+        delegate?.updateFavoriteLocation(locationString: locationString, locationType: locationType)
     }
 }
 

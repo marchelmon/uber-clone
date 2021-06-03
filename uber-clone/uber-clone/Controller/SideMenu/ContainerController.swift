@@ -153,7 +153,9 @@ extension ContainerController: MenuControllerDelegate {
                 break
             case .settings:
                 guard let user = self.user else { return }
-                let nav = UINavigationController(rootViewController: SettingsController(user: user))
+                let controller = SettingsController(user: user)
+                controller.delegate = self
+                let nav = UINavigationController(rootViewController: controller)
                 nav.modalPresentationStyle = .fullScreen
                 self.present(nav, animated: true, completion: nil)
                 
@@ -169,5 +171,13 @@ extension ContainerController: MenuControllerDelegate {
                 self.present(alert, animated: true, completion: nil)
             }
         }
+    }
+}
+
+//MARK: - SettingsControllerDelegate
+
+extension ContainerController: SettingsControllerDelegate {
+    func updateUser(_ controller: SettingsController) {
+        self.user = controller.user
     }
 }
