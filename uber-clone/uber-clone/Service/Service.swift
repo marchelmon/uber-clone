@@ -188,6 +188,7 @@ struct Service {
     }
     
     func updateTripState(trip: Trip, state: TripState, completion: @escaping(Error?) -> Void) {
+        print("TRIPSTATE: \(state)")
         COLLECTION_TRIPS.document(trip.passengerUid).updateData(["state": state.rawValue], completion: completion)
     }
     

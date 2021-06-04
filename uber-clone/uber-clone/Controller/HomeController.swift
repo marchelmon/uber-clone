@@ -151,6 +151,16 @@ class HomeController: UIViewController {
             switch trip.state as TripState {
             case .requested:
                 print("Requested ")
+            case .denied:
+                print("DenIED DIIDIDDIIDIDI")
+                self.shouldPresentLoadingView(false)
+                self.presentAlertController(withTitle: "Ops", withMessage: "It looks like we couldn't find you a driver, please try again...")
+                PassengerService.shared.deleteTrip { error in
+                    self.centerMapOnUserLocation()
+                    self.configureActionButton(config: .showMenu)
+                    self.inputActivationView.alpha = 1
+                    self.removeAnnotationsAndOverlays()
+                }
             case .accepted:
                 self.shouldPresentLoadingView(false)
                 self.removeAnnotationsAndOverlays()
@@ -258,7 +268,6 @@ class HomeController: UIViewController {
         
         view.addSubview(actionButton)
         actionButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, paddingTop: 16, paddingLeft: 20, width: 30, height: 30)
-        
     }
     
     func configureInputActivationView() {

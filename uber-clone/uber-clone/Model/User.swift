@@ -21,6 +21,8 @@ struct User {
     var location: CLLocation?
     var home: String?
     var work: String?
+    
+    var firstInitial: String { return String(fullname.prefix(1)) }
 
     init(uid: String, data: [String: Any]) {
         self.uid = uid

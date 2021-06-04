@@ -18,7 +18,7 @@ class RegistrationController: UIViewController {
     
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "UBER"
+        label.text = "!UBER"
         label.font = UIFont(name: "Avenir-Light", size: 36)
         label.textColor = UIColor(white: 1, alpha: 0.8)
         return label

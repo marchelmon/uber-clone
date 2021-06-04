@@ -14,8 +14,8 @@ class UserInfoHeader: UIView {
     private let user: User
     
     private let profileImageView: UIImageView = {
-        let iv = UIImageView()
-        iv.backgroundColor = .lightGray
+        let iv = UIImageView(image: #imageLiteral(resourceName: "ic_person_outline_white_2x").withRenderingMode(.alwaysOriginal))
+        iv.backgroundColor = .black
         iv.layer.cornerRadius = 64 / 2
         return iv
     }()

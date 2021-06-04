@@ -47,9 +47,6 @@ class AddLocationController: UITableViewController {
         configureTableView()
         configureSearchCompleter()
         
-        print("TYPE IS: \(locationType)")
-        print("LOCATION IS: \(location)")
-        
     }
     
     //MARK: - Actions

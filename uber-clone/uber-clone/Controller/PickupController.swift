@@ -17,11 +17,11 @@ class PickupController: UIViewController {
     //MARK: - Properties
     
     weak var delegate: PickupControllerDelegate?
-    
+        
     private let mapView = MKMapView()
     let trip: Trip
     
-    private lazy var circularProgressView:CircularProgressView = {
+    private lazy var circularProgressView: CircularProgressView = {
         let frame = CGRect(x: 0, y: 0, width: 360, height: 360)
         let cp = CircularProgressView(frame: frame)
         cp.addSubview(mapView)
@@ -75,6 +75,7 @@ class PickupController: UIViewController {
         
         configureUI()
         configureMapView()
+        self.perform(#selector(animateProgress), with: nil, afterDelay: 0.5)
     }
     
     override var prefersStatusBarHidden: Bool {
@@ -90,7 +91,14 @@ class PickupController: UIViewController {
     }
     
     @objc func handleDismissal() {
-        dismiss(animated: true, completion: nil)
+        Service.shared.updateTripState(trip: trip, state: .denied) { error in
+            self.dismiss(animated: true, completion: nil)
+        }
+    }
+    
+    @objc func animateProgress() {
+        circularProgressView.animatePulsatingLayer()
+        circularProgressView.setProgressWithAnimation(duration: 10, value: 0, completion: nil)
     }
     
     //MARK: - API
@@ -105,7 +113,9 @@ class PickupController: UIViewController {
         cancelButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, paddingLeft: 16)
         
         view.addSubview(circularProgressView)
+        circularProgressView.anchor(top: cancelButton.bottomAnchor, paddingTop: 40, width: 360, height: 360)
         circularProgressView.centerX(inView: view)
+
         
         view.addSubview(pickupLabel)
         pickupLabel.anchor(top: circularProgressView.bottomAnchor, paddingTop: 32)
