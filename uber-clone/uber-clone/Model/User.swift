@@ -17,7 +17,7 @@ struct User {
     let uid: String
     let fullname: String
     let email: String
-    var accountType: AccountType!
+    var accountType: AccountType
     var location: CLLocation?
     var home: String?
     var work: String?
@@ -32,7 +32,9 @@ struct User {
         work = data["work"] as? String
         
         if let index = data["accountType"] as? Int {
-            self.accountType = AccountType(rawValue: index)
+            self.accountType = AccountType(rawValue: index) ?? .driver
+        } else {
+            self.accountType = .driver
         }
     }
     

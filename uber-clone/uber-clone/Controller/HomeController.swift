@@ -291,7 +291,7 @@ class HomeController: UIViewController {
         mapView.delegate = self
         
         guard let coordinate = locationManager.location?.coordinate else { return }
-        let region = MKCoordinateRegion(center: coordinate, latitudinalMeters: CLLocationDistance(exactly: 10000)!, longitudinalMeters: CLLocationDistance(exactly: 10000)!)
+        let region = MKCoordinateRegion(center: coordinate, latitudinalMeters: CLLocationDistance(exactly: 5000)!, longitudinalMeters: CLLocationDistance(exactly: 5000)!)
         mapView.setRegion(mapView.regionThatFits(region), animated: true)
     }
     

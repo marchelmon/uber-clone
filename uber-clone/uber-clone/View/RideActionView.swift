@@ -193,11 +193,11 @@ class RideActionView: UIView {
         case .tripAccepted:
             guard let user = user else { return }
             if user.accountType == .passenger {
-                titleLabel.text = "En Route To Passenger"
+                titleLabel.text = "Driving to passenger"
                 buttonAction = .getDirections
                 actionButton.setTitle(buttonAction.description, for: .normal)
             } else {
-                titleLabel.text = "Driver En Route"
+                titleLabel.text = "The driver is on their way"
                 buttonAction = .cancel
                 actionButton.setTitle(buttonAction.description, for: .normal)
             }
@@ -224,7 +224,7 @@ class RideActionView: UIView {
                 buttonAction = .getDirections
                 actionButton.setTitle(buttonAction.description, for: .normal)
             }
-            titleLabel.text = "En Route To Destination"
+            titleLabel.text = "Going to destination"
         case .endTrip:
             guard let user = user else { return }
             if user.accountType == .driver {

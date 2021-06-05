@@ -20,7 +20,7 @@ class ContainerController: UIViewController {
         }
     }
     
-    private var homeController: HomeController!
+    private var homeController = HomeController()
     private var menuController: MenuController!
         
     var menuIsExpanded: Bool = false
@@ -96,7 +96,6 @@ class ContainerController: UIViewController {
     }
     
     func configureHomeController(withUser user: User) {
-        homeController = HomeController()
         homeController.user = user
         addChild(homeController)
         homeController.didMove(toParent: self)

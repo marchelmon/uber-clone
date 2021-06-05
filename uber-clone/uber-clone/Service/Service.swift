@@ -18,7 +18,6 @@ let COLLECTION_DRIVER_LOCATIONS = DB_REF.collection("driver-locations")
 let COLLECTION_TRIPS = DB_REF.collection("trips")
 
 
-
 struct DriverService {
     static let shared = DriverService()
     
@@ -179,7 +178,6 @@ struct Service {
         COLLECTION_TRIPS.getDocuments { (snapshot, error) in
             if let error = error {
                 print("ERROR fetching all trips: \(error.localizedDescription)")
-                //TODO: Give error instead of completion to user
                 completion(0)
                 return
             }
@@ -188,7 +186,6 @@ struct Service {
     }
     
     func updateTripState(trip: Trip, state: TripState, completion: @escaping(Error?) -> Void) {
-        print("TRIPSTATE: \(state)")
         COLLECTION_TRIPS.document(trip.passengerUid).updateData(["state": state.rawValue], completion: completion)
     }
     

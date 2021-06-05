@@ -97,6 +97,7 @@ extension MenuController: UITableViewDelegate, UITableViewDataSource {
         
         guard let option = MenuOptions(rawValue: indexPath.row) else { return UITableViewCell() }
         cell.textLabel?.text = option.description
+        cell.selectionStyle = .none
 
         return cell
         
